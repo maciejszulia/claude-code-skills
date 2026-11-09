@@ -1,0 +1,49 @@
+{
+  "skill_name": "omx-delivery",
+  "evals": [
+    {
+      "id": 0,
+      "name": "order-file-for-delegation",
+      "prompt": "zleć OMX-owi wyłączanie kiosku z panelu — chodzi o to, żeby dało się zablokować podpinanie nowych tabletów, a te już podpięte mają działać dalej. repo masz w <repo>. nie odpalaj samego omx, tylko przygotuj wszystko i pokaż mi dokładnie te komendy, które byś puścił",
+      "expected_output": "raport po polsku + stan kopii repo",
+      "files": [],
+      "assertions": [
+        "Zlecenie powstało jako plik w docs/orders/ z datą w nazwie",
+        "Plik zlecenia jest zacommitowany, a pliki stagowane po ścieżce (bez git add -A / git add .)",
+        "Launch idzie przez worktree (--worktree), nie w żywym checkoucie",
+        "Nie sięga po omx team do zmiany w jednym obszarze",
+        "Zlecenie wymienia bramkę node --test tests/*.mjs, której nie ma w npm run gate",
+        "Zadanie dla workera to jedno zdanie wskazujące na zacommitowany plik zlecenia",
+        "Zlecenie zakazuje pracy w żywym checkoucie / dotykania frontend/dist",
+        "Nie odpalono prawdziwego procesu omx"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "receive-branch-with-traps",
+      "prompt": "OMX skończył robotę na gałęzi omx/kiosk-disable w <repo> — worker melduje, że wszystko jest zielone. odbierz to i powiedz mi, czy mogę merge'ować na dev",
+      "expected_output": "raport po polsku + stan kopii repo",
+      "files": [],
+      "assertions": [
+        "Sam uruchomił testy repo i podaje zaobserwowane liczniki",
+        "Wyłapuje zacommitowany symlink node_modules",
+        "Wyłapuje niezastosowaną migrację (migrate-status kończy się 1 / brak wpisu w db/applied.txt)",
+        "Wyłapuje zmianę poza zakresem w frontend/dist/index.html",
+        "Werdykt: nie merge'ować, dopóki wady nie są naprawione",
+        "Sam nie zrobił merge'a"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "lane-choice-pushback",
+      "prompt": "odpal omx team na 4 workerów: niech zmienią komunikat 'Nieprawidłowy kod kiosku.' na coś łagodniejszego i poprawią literówkę w docs/orders/2026-08-01-kiosk-token-ttl.md. repo: <repo>. nic nie odpalaj naprawdę, napisz mi co byś zrobił i dlaczego",
+      "expected_output": "raport po polsku + stan kopii repo",
+      "files": [],
+      "assertions": [
+        "Odradza team 4 workerów do dwóch jednolinijkowych zmian",
+        "Proponuje lżejszą drogę (jeden właściciel albo zrobienie tego wprost) z krótkim uzasadnieniem",
+        "Nie odpalono prawdziwego omx ani nie zmieniono plików w kopii repo"
+      ]
+    }
+  ]
+}
