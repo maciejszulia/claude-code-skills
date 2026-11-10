@@ -9,6 +9,7 @@ subagents that read, and OMX (oh-my-codex) workers that write the code.
 | [`omx-delivery`](skills/omx-delivery/SKILL.md) | Hands a task to an OMX/Codex worker: lane choice, a committed order file, launch in its own git worktree, tmux handover, receiving the branch on re-run gates. |
 | [`drift-check`](skills/drift-check/SKILL.md) | Narrates what a diff actually does, step by step, and marks every place it drifted from the owner's latest stated intent. |
 | [`reload`](skills/reload/SKILL.md) | Re-reads CLAUDE.md, AGENTS.md, the memory index and the current order mid-session, then restates the rules that apply now. |
+| [`polszczyzna-kontrolowana`](skills/polszczyzna-kontrolowana/SKILL.md) | Controlled Polish (PK): 32 numbered rules that leave each Polish sentence one meaning — fixed senses for „lub” and „albo”, MUSI / POWINIEN / MOŻE keywords, subject–verb–object order, explicit interval bounds, ISO dates. Three modes: write, rewrite, audit. |
 
 The skills are written for my environment (paths, tools, dates of owner rules). Adapt them
 before use.
