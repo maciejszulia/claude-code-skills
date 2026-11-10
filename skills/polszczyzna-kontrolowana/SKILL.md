@@ -1,6 +1,6 @@
 ---
 name: polszczyzna-kontrolowana
-description: Polszczyzna Kontrolowana (PK) — controlled Polish that leaves every sentence exactly one meaning. Use whenever you write, rewrite or audit Polish text that people will act on (instrukcje, procedury, regulaminy, wymagania, specyfikacje, umowy, raporty techniczne, komunikaty z terminem lub kwotą) and whenever the user says "napisz precyzyjnie", "jednoznacznie", "usuń niejednoznaczności", "sprawdź, czy to jest jednoznaczne", "polszczyzna kontrolowana", "PK" or "/pk". Not for fiction, marketing copy or casual chat.
+description: Polszczyzna Kontrolowana (PK) — controlled Polish that leaves every sentence exactly one meaning. Use whenever you write, rewrite or audit Polish text that people will act on (instrukcje, procedury, regulaminy, wymagania, specyfikacje, umowy, raporty techniczne, komunikaty z terminem lub kwotą) and whenever the user says "napisz precyzyjnie", "jednoznacznie", "usuń niejednoznaczności", "sprawdź, czy to jest jednoznaczne", "polszczyzna kontrolowana", "napisz w PK", "sprawdź w PK" or "/pk". Not for fiction, marketing copy or casual chat, and not when PK means primary key.
 ---
 
 # Polszczyzna Kontrolowana (PK) 0.1
@@ -24,7 +24,7 @@ Ustal tryb na podstawie prośby użytkownika.
 Trzy zasady obowiązują w każdym trybie.
 
 1. **Nie zgaduj faktów.** Jeżeli brakuje liczby, granicy, wykonawcy, obiektu lub daty, to wstaw znacznik `[DO USTALENIA: czego brakuje]`. Zdanie z wymyśloną liczbą szkodzi bardziej niż zdanie nieostre, bo czytelnik ufa liczbie.
-2. **Nie wybieraj znaczenia po cichu.** Jeżeli zdanie źródłowe ma 2 znaczenia, to zapisz oba znaczenia w tabeli „Decyzje i braki”. Jeżeli wybór zmienia obowiązek, kwotę, termin lub bezpieczeństwo, to wstaw znacznik zamiast wyboru. Jeżeli wybór nie zmienia żadnej z tych 4 rzeczy, to wybierz znaczenie bardziej prawdopodobne. Zapisz wybór w tabeli.
+2. **Nie wybieraj znaczenia po cichu.** Jeżeli zdanie źródłowe ma 2 znaczenia, to zapisz oba znaczenia w tabeli „Decyzje i braki”. Jeżeli wybór zmienia obowiązek, kwotę, termin lub bezpieczeństwo, to wstaw znacznik zamiast wyboru. Jeżeli wybór nie zmienia żadnej z tych 4 rzeczy, to wybierz znaczenie, które zgadza się z resztą tekstu. Zapisz wybór w tabeli.
 3. **Sprawdź wynik.** Po napisaniu tekstu wykonaj kroki z sekcji „Kontrola”. Policz słowa. Nie zastępuj liczenia szacunkiem.
 
 ## Słowa kluczowe wymagań
@@ -44,6 +44,7 @@ Używaj tych słów w regulaminie, wymaganiu, specyfikacji i umowie. Wzorem są 
 - Nie twórz zakazu przez negację słowa MUSI. „Nie musi” znaczy brak wymogu, a nie zakaz.
 - Brak wymogu zapisz słowem MOŻE: „Operator MOŻE pominąć krok 3.”
 - Możliwość zdarzenia zapisz jako warunek: „Jeżeli pompa P1 pracuje bez wody, to pompa P1 przegrzewa się.”
+- Zdolność urządzenia zapisz liczbą: „Pompa P1 podaje co najwyżej 40 l/min.”
 - Nie pisz „należy”, „trzeba”, „powinno się”, „wymaga się”. Te słowa ukrywają wykonawcę.
 - W instrukcji krok po kroku użyj trybu rozkazującego zamiast słowa MUSI.
 
@@ -72,7 +73,7 @@ Każda reguła ma numer. Podawaj numer reguły w tabeli naruszeń i w tabeli „
 
 Wzór definicji: `[termin] oznacza [rodzaj], który [cecha odróżniająca]`. Nie używaj zdefiniowanego terminu w innym znaczeniu.
 
-**A5. Słowa nieostre.** Zastąp słowo nieostre liczbą z jednostką albo warunkiem, który da się sprawdzić. Listę słów nieostrych zawiera sekcja „Słowa zakazane”.
+**A5. Słowa nieostre.** Zastąp słowo nieostre liczbą z jednostką albo warunkiem, który czytelnik potrafi sprawdzić. Listę słów nieostrych zawiera sekcja „Słowa zakazane”.
 - Źle: „Regularnie sprawdzaj ciśnienie.”
 - Dobrze: „Sprawdzaj ciśnienie co 15 min.”
 
@@ -139,11 +140,12 @@ Jeżeli przypadek przeciwny wymaga działania, to opisz przypadek przeciwny osob
 
 **C5. Jedno przeczenie.** Pisz zdania twierdzące. Jedno zdanie zawiera co najwyżej 1 przeczenie.
 - Źle: „Nie otwieraj zaworu, dopóki ciśnienie nie spadnie.”
-- Dobrze: „Gdy ciśnienie p1 będzie mniejsze niż 0,5 bar, otwórz zawór Z1.”
+- Dobrze: „Gdy ciśnienie p1 spadnie do wartości mniejszej niż 0,5 bar, otwórz zawór Z1.”
 
 ### D. Liczby, wielkości, czas
 
 **D1. Wielkość.** Podaj liczbę i jednostkę. Jeżeli wartość zależy od warunków, to podaj warunki odniesienia. Zapisuj liczby cyframi. Zostaw spację między liczbą a jednostką. Oddziel części dziesiętne przecinkiem. Oddziel liczby na liście średnikiem.
+- Wyjątek od spacji: symbole kąta płaskiego °, ′ i ″ stoją bezpośrednio po liczbie, np. „37,25°”.
 - Źle: „Ciśnienie w instalacji: 2,5.”
 - Dobrze: „Nadciśnienie w instalacji wynosi 2,5 bar przy temperaturze wody 20 °C.”
 
@@ -171,7 +173,7 @@ Jeżeli przypadek przeciwny wymaga działania, to opisz przypadek przeciwny osob
 - Źle: „Wyślij raport do piątku.”
 - Dobrze: „Wyślij raport najpóźniej 2026-11-13 o godz. 16:00.”
 
-**D4. Terminy i częstość.** Dla terminu w dniach podaj 3 dane: zdarzenie początkowe, liczbę dni, dzień numer 1. Częstość zapisz jako „co N jednostek” albo „N razy na okres”.
+**D4. Terminy i częstość.** Dla terminu w dniach podaj 3 dane: zdarzenie początkowe, liczbę dni, dzień numer 1. Częstość zapisz jako „co N jednostek” albo „N razy na okres”. Słowo „dzień” znaczy w PK dzień kalendarzowy. Okres 24 h nazwij słowem „doba”.
 - Źle: „Złóż reklamację w ciągu 14 dni.”
 - Dobrze: „Złóż reklamację najpóźniej w dniu 14. Dzień 1 to dzień po dniu odbioru towaru.”
 
@@ -184,7 +186,7 @@ Jeżeli przypadek przeciwny wymaga działania, to opisz przypadek przeciwny osob
 
 ### E. Struktura tekstu
 
-**E1. Kroki.** Jedno polecenie zajmuje 1 zdanie i 1 krok. Jeżeli kolejność ma znaczenie, to ponumeruj kroki.
+**E1. Kroki.** Jedno polecenie zajmuje 1 zdanie i 1 krok. Jeżeli kolejność ma znaczenie, to ponumeruj kroki. Oczekiwany wynik kroku zapisz jako fakt po kroku: „Wynik: lampka L1 świeci.”
 
 **E2. Listy.** Dla co najmniej 3 członów użyj listy pionowej. Nagłówek listy nazywa logikę:
 - „Wykonaj każdy krok w tej kolejności:”
@@ -223,7 +225,7 @@ Nie używaj słów „podobno”, „chyba”, „raczej”, „prawdopodobnie�
 
 | Nie pisz | Powód | Napisz |
 |---|---|---|
-| odpowiedni, właściwy, stosowny, należyty | brak kryterium | warunek, który da się sprawdzić |
+| odpowiedni, właściwy, stosowny, należyty | brak kryterium | warunek, który czytelnik potrafi sprawdzić |
 | niezwłocznie, wkrótce, szybko, na bieżąco | brak czasu | „w czasie krótszym niż N” albo data z godziną |
 | regularnie, okresowo, często, rzadko, zwykle | brak częstości | „co N jednostek” |
 | kilka, kilkanaście, parę, wiele, większość | brak liczby („kilkanaście” obejmuje wartości od 11 do 19) | liczba |
@@ -231,8 +233,9 @@ Nie używaj słów „podobno”, „chyba”, „raczej”, „prawdopodobnie�
 | około, mniej więcej, prawie | brak tolerancji | wartość ± tolerancja |
 | do, powyżej, poniżej, ponad, między, minimum, maksimum (jako granica) | granica włączona albo wyłączona | zapis z reguły D2 |
 | dziś, jutro, wczoraj, obecnie, ostatnio, następny, przyszły, zeszły | znaczenie zależy od dnia czytania | data |
+| ostatni | 2 znaczenia: końcowy; najnowszy | „końcowy” albo nazwa z datą |
 | bądź, czy (jako spójnik), względnie, ewentualnie, i/lub, ukośnik | 2 znaczenia | „lub” albo „albo” |
-| jeśli, o ile, w razie, chyba że, pod warunkiem że | wiele słów dla 1 relacji | wzór z reguły C3 |
+| jeśli, o ile, w razie, chyba że, pod warunkiem że | więcej niż 1 słowo dla 1 relacji | wzór z reguły C3 |
 | należy, trzeba, powinno się, wymaga się | brak wykonawcy | wykonawca i słowo kluczowe |
 | musi, powinien, może (małymi literami) | 2 znaczenia | słowo kluczowe albo warunek |
 | itp., itd., i inne, m.in. | lista otwarta | pełna lista albo „Przykłady (lista niepełna):” |
@@ -320,23 +323,23 @@ Decyzje i braki:
 - Polecenie użytkownika ma pierwszeństwo przed regułą PK. Zapisz odstępstwo w tabeli „Decyzje i braki”.
 - Jeżeli 2 reguły kolidują, to jednoznaczność wygrywa z długością. Podziel zdanie.
 - Umowa w PK nadal wymaga oceny prawnika. PK usuwa niejednoznaczność języka i nie ocenia skutków prawnych.
-- PK to inny standard niż prosty język. Prosty język służy łatwemu zrozumieniu (ISO 24495-1). PK służy jednemu znaczeniu. Jeden tekst MOŻE spełniać oba standardy.
+- PK to inny standard niż prosty język. Prosty język służy łatwemu zrozumieniu (ISO 24495-1). PK służy jednemu znaczeniu. Autor MOŻE zastosować oba standardy w 1 tekście.
 
 ## Źródła
 
 - Słowa kluczowe: [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) (S. Bradner, 1997) oraz [RFC 8174](https://www.rfc-editor.org/info/rfc8174).
-- A1, A4, A6, A7, B5, B8: [„Zasady techniki prawodawczej”, Dz.U. 2026 poz. 300](https://api.sejm.gov.pl/eli/acts/DU/2026/300/text.pdf), § 7, § 8, § 10, § 146, § 147, § 153, § 154.
-- B2: Zintegrowana Platforma Edukacyjna (ZPE), [„Przemiany w deklinacji polskiej”](https://zpe.gov.pl/pdf/Pkz7BO1mo) (biernik równy mianownikowi).
-- B3, B8, E3: wzorem jest [ASD-STE100 Simplified Technical English](https://www.asd-ste100.org/), Issue 9 (2025).
+- A1, A4, A6, A7, B5, B8: [„Zasady techniki prawodawczej”, Dz.U. 2026 poz. 300](https://api.sejm.gov.pl/eli/acts/DU/2026/300/text.pdf), § 7, § 8, § 10, § 146, § 147, § 151, § 153, § 154.
+- B2: Zintegrowana Platforma Edukacyjna (ZPE), [„Przemiany w deklinacji polskiej: rzeczownik rodzaju męskiego”](https://zpe.gov.pl/pdf/Pkz7BO1mo) (rzeczownik męski nieżywotny ma biernik równy mianownikowi).
+- B1, B3, B4, B8, E3: wzorem jest [ASD-STE100 Simplified Technical English](https://www.asd-ste100.org/), Issue 9 (2025).
 - B5: [„Kilka uwag o poprawności użycia imiesłowów współczesnych”](https://polonica.ijppan.pl/index.php/polonica/article/view/782/356), „Polonica”.
-- B6: ZPE, [„Wieloznaczność wypowiedzi”](https://zpe.gov.pl/a/przeczytaj/DbAw1OFW1) (amfibolia).
+- B6: ZPE, [„Kurs logiki: lekcja 15. Wieloznaczność, chwiejność składniowa i myślenie figuralne”](https://zpe.gov.pl/a/przeczytaj/DbAw1OFW1) (amfibolia).
 - C1: [„Elementy logiki i teorii mnogości”](https://wydawnictwo.p.lodz.pl/images/spisy-tresci/3-30JdrzejewskaEKotlicka_wstp.pdf), Wydawnictwo Politechniki Łódzkiej; A. Kiklewicz, [„O pewnym typie użycia spójników rozłącznych w języku polskim”](https://www.press.uni.lodz.pl/index.php/wul/en/catalog/download/1334/7902/5032?inline=1).
 - C3: A. Mavin i in., [Easy Approach to Requirements Syntax (EARS)](https://alistairmavin.com/ears/), 2009.
 - C4: S. Przybyszewski, [„O użyciu operatorów kwantyfikacji ogólnej w zdaniach przeczących”](https://www.ceeol.com/search/article-detail?id=906854), „Język Polski” 2020, z. 3.
 - D1: [rozporządzenie w sprawie legalnych jednostek miar, Dz.U. 2020 poz. 1024](https://api.sejm.gov.pl/eli/acts/DU/2020/1024/text.html), § 15; Główny Urząd Miar, [zasady pisowni SI](https://www.gum.gov.pl/ftp/jpg/Redefinicja_SI/Ulotka_SI_-_druk_2023_10_26_ost.pdf).
 - D3: [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html).
-- D5: [punkt procentowy i punkt bazowy](https://www.bankier.pl/wiadomosc/Punkt-bazowy-8793409.html), Bankier.pl.
-- D6: Ośrodek Rozwoju Edukacji, [nazwy dużych liczb](https://zasobyip2.ore.edu.pl/pl/publications/download/13502).
+- D5: ZPE, [„Punkt procentowy”](https://zpe.gov.pl/a/przeczytaj/DsTOOMs1P).
+- D6: J. Klimeczko, [„Notacja wykładnicza i jej zastosowanie w praktyce”](https://zasobyip2.ore.edu.pl/pl/publications/download/13502), zasoby Ośrodka Rozwoju Edukacji (polski „bilion”); MathWorld, [„Billion”](https://mathworld.wolfram.com/Billion.html) (angielskie „billion”).
 - Słowo „kilkanaście”: D. Roszko, R. Roszko, [„Slavia Meridionalis” 2023](https://doaj.org/article/0e38245a8c444cdbad36fa24847dc128).
 - Ortografia: Ministerstwo Nauki i Szkolnictwa Wyższego, [nowe zasady pisowni](https://www.gov.pl/web/nauka/nowe-zasady-pisowni--prostsza-bardziej-spojna-ortografia).
 - Prosty język: [ISO 24495-1:2023](https://www.iplfederation.org/iso-standard/).
