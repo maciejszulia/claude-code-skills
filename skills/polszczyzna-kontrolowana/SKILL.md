@@ -21,7 +21,7 @@ Ustal tryb na podstawie prośby użytkownika.
 | PRZEREDAGUJ | „przepisz precyzyjnie”, „usuń niejednoznaczności” | Tekst w PK oraz tabela „Decyzje i braki”. |
 | SPRAWDŹ | „sprawdź, czy tekst jest jednoznaczny” | Tabela naruszeń. Tekst źródłowy zostaje bez zmian. |
 
-Trzy zasady obowiązują w każdym trybie.
+W każdym trybie obowiązują 3 zasady.
 
 1. **Nie zgaduj faktów.** Jeżeli brakuje liczby, granicy, wykonawcy, obiektu lub daty, to wstaw znacznik `[DO USTALENIA: czego brakuje]`. Zdanie z wymyśloną liczbą szkodzi bardziej niż zdanie nieostre, bo czytelnik ufa liczbie.
 2. **Nie wybieraj znaczenia po cichu.** Jeżeli zdanie źródłowe ma 2 znaczenia, to zapisz oba znaczenia w tabeli „Decyzje i braki”. Jeżeli wybór zmienia obowiązek, kwotę, termin lub bezpieczeństwo, to wstaw znacznik zamiast wyboru. Jeżeli wybór nie zmienia żadnej z tych 4 rzeczy, to wybierz znaczenie, które zgadza się z resztą tekstu. Zapisz wybór w tabeli.
@@ -87,7 +87,7 @@ Wzór definicji: `[termin] oznacza [rodzaj], który [cecha odróżniająca]`. Ni
 - Źle: „Zawór zamyka się po pracy.” (3 znaczenia: ktoś zamyka zawór; zawór zamyka się sam; czytelnik ma zamknąć zawór)
 - Dobrze: „Operator zamyka zawór Z1 po zakończeniu pracy.”
 
-**B2. Szyk.** Stosuj szyk: podmiot, orzeczenie, dopełnienie. Mianownik i biernik wielu rzeczowników mają tę samą formę. W takim zdaniu tylko szyk wskazuje wykonawcę.
+**B2. Szyk.** Stosuj szyk: podmiot, orzeczenie, dopełnienie. Rzeczownik nijaki i rzeczownik męski nieżywotny mają biernik równy mianownikowi. W zdaniu z 2 takimi rzeczownikami tylko szyk wskazuje wykonawcę.
 - Przykład: „Ciśnienie zmienia przepływ.” Poza PK to zdanie ma 2 znaczenia. W PK pierwszy rzeczownik jest podmiotem.
 
 **B3. Instrukcja.** Pisz instrukcję w trybie rozkazującym. Jedno zdanie zawiera 1 polecenie. Wybierz aspekt czasownika:
