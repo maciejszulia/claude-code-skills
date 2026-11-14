@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 189" width="960" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" role="img" aria-label="Long contexts dilute instructions that sit far from the end. reload puts the rules for the current task back in front.">
+<rect width="960" height="189" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111111"/></marker></defs>
+<text x="16" y="32" font-size="15" font-weight="bold" fill="#111111">Long contexts dilute instructions that sit far from the end.</text>
+<text x="16" y="53" font-size="15" font-weight="bold" fill="#111111">reload puts the rules for the current task back in front.</text>
+<polyline points="230,122.5 254,122.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="468,122.5 492,122.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="706,122.5 730,122.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="16" y="72" width="214" height="101" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="110" fill="#111111" font-weight="bold">Trigger</text>
+<text x="24" y="127" fill="#111111">/reload, or the first</text>
+<text x="24" y="144" fill="#111111">turn after /compact</text>
+<rect x="254" y="72" width="214" height="101" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="262" y="93" fill="#111111" font-weight="bold">Re-read, in order</text>
+<text x="262" y="110" fill="#111111">global CLAUDE.md,</text>
+<text x="262" y="127" fill="#111111">project CLAUDE.md and</text>
+<text x="262" y="144" fill="#111111">AGENTS.md, MEMORY.md,</text>
+<text x="262" y="161" fill="#111111">the current order</text>
+<rect x="492" y="72" width="214" height="101" fill="#ffffff" stroke="#c8102e" stroke-width="2"/>
+<text x="500" y="101.5" fill="#c8102e" font-weight="bold">Restate</text>
+<text x="500" y="118.5" fill="#111111">at most five lines:</text>
+<text x="500" y="135.5" fill="#111111">only the rules that</text>
+<text x="500" y="152.5" fill="#111111">govern this task</text>
+<rect x="730" y="72" width="214" height="101" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="738" y="101.5" fill="#111111" font-weight="bold">Continue</text>
+<text x="738" y="118.5" fill="#111111">from where the work</text>
+<text x="738" y="135.5" fill="#111111">stopped; verified work</text>
+<text x="738" y="152.5" fill="#111111">is not redone</text>
+</svg>

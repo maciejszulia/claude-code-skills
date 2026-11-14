@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "python3 ~/.claude/hooks/dziennik.py", "timeout": 5 } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "python3 ~/.claude/hooks/dziennik.py", "timeout": 5 } ] }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Agent|Workflow|Skill|Artifact|Write|Edit|Bash",
+        "hooks": [ { "type": "command", "command": "python3 ~/.claude/hooks/dziennik.py", "timeout": 5 } ]
+      }
+    ],
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "python3 ~/.claude/hooks/sb-recall.py", "timeout": 10 } ] }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [ { "type": "command", "command": "python3 ~/.claude/hooks/sb-recall.py", "timeout": 5 } ]
+      }
+    ],
+    "SessionEnd": [
+      { "hooks": [ { "type": "command", "command": "python3 ~/.claude/hooks/sb-summarize.py", "timeout": 10 } ] }
+    ]
+  }
+}

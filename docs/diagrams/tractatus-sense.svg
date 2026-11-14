@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 286" width="960" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" role="img" aria-label="A request is safe only when every result that satisfies its words is wanted: P is a subset of C. The skill narrows P before the work starts.">
+<rect width="960" height="286" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111111"/></marker></defs>
+<text x="16" y="32" font-size="15" font-weight="bold" fill="#111111">A request is safe only when every result that satisfies its words is wanted:</text>
+<text x="16" y="53" font-size="15" font-weight="bold" fill="#111111">P is a subset of C. The skill narrows P before the work starts.</text>
+<polyline points="230,114 254,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="468,114 492,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="706,114 730,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="837,156 837,186" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="16" y="72" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="110" fill="#111111" font-weight="bold">Request</text>
+<text x="24" y="127" fill="#111111">the words, as given</text>
+<rect x="254" y="72" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="262" y="93" fill="#111111" font-weight="bold">Truth-conditions</text>
+<text x="262" y="110" fill="#111111">elementary propositions,</text>
+<text x="262" y="127" fill="#111111">each answered yes or no</text>
+<text x="262" y="144" fill="#111111">by looking</text>
+<rect x="492" y="72" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="500" y="93" fill="#111111" font-weight="bold">Split the signs</text>
+<text x="500" y="110" fill="#111111">words that signify</text>
+<text x="500" y="127" fill="#111111">in two ways, settled</text>
+<text x="500" y="144" fill="#111111">from repo and memory</text>
+<rect x="730" y="72" width="214" height="84" fill="#ffffff" stroke="#c8102e" stroke-width="2"/>
+<text x="738" y="93" fill="#c8102e" font-weight="bold">Find P \ C</text>
+<text x="738" y="110" fill="#111111">results the words allow</text>
+<text x="738" y="127" fill="#111111">and the owner would</text>
+<text x="738" y="144" fill="#111111">reject</text>
+<rect x="730" y="186" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="738" y="207" fill="#111111" font-weight="bold">Narrow or ask</text>
+<text x="738" y="224" fill="#111111">negative conditions;</text>
+<text x="738" y="241" fill="#111111">one question per</text>
+<text x="738" y="258" fill="#111111">open sign</text>
+</svg>

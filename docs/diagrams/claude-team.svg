@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 269" width="960" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" role="img" aria-label="The lead decides and verifies. Subagents only read, check and draft, and what they return is a claim until the lead has opened it.">
+<rect width="960" height="269" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111111"/></marker></defs>
+<text x="16" y="32" font-size="15" font-weight="bold" fill="#111111">The lead decides and verifies. Subagents only read, check and draft,</text>
+<text x="16" y="53" font-size="15" font-weight="bold" fill="#111111">and what they return is a claim until the lead has opened it.</text>
+<polyline points="99.2,186 99.2,156" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="182.4,114 206.4,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="372.8,114 396.8,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="372.8,219.5 396.8,219.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="563.2,114 587.2,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="563.2,219.5 587.2,219.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="753.6,114 777.6,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="860.8,156 860.8,186" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="16" y="72" width="166.4" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="93" fill="#111111" font-weight="bold">Lead session</text>
+<text x="24" y="110" fill="#111111">splits the task,</text>
+<text x="24" y="127" fill="#111111">0 agents for a few</text>
+<text x="24" y="144" fill="#111111">tool calls</text>
+<rect x="16" y="186" width="166.4" height="67" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="207" fill="#111111" font-weight="bold">Caps</text>
+<text x="24" y="224" fill="#111111">at most 5 subagents,</text>
+<text x="24" y="241" fill="#111111">2 is the optimum</text>
+<rect x="206.4" y="72" width="166.4" height="181" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="214.4" y="124.5" fill="#111111" font-weight="bold">Brief, six parts</text>
+<text x="214.4" y="141.5" fill="#111111">scope, paths,</text>
+<text x="214.4" y="158.5" fill="#111111">exact commands,</text>
+<text x="214.4" y="175.5" fill="#111111">output shape,</text>
+<text x="214.4" y="192.5" fill="#111111">forbidden actions,</text>
+<text x="214.4" y="209.5" fill="#111111">scratchpad</text>
+<rect x="396.8" y="72" width="166.4" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="404.8" y="101.5" fill="#111111" font-weight="bold">Reader</text>
+<text x="404.8" y="118.5" fill="#111111">one big read,</text>
+<text x="404.8" y="135.5" fill="#111111">writes nothing</text>
+<rect x="396.8" y="186" width="166.4" height="67" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="404.8" y="207" fill="#111111" font-weight="bold">Worker</text>
+<text x="404.8" y="224" fill="#111111">one bounded task,</text>
+<text x="404.8" y="241" fill="#111111">never pushes</text>
+<rect x="587.2" y="72" width="166.4" height="181" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="595.2" y="141.5" fill="#111111" font-weight="bold">Findings</text>
+<text x="595.2" y="158.5" fill="#111111">ranked, each with</text>
+<text x="595.2" y="175.5" fill="#111111">file:line, plus an</text>
+<text x="595.2" y="192.5" fill="#111111">Unverified section</text>
+<rect x="777.6" y="72" width="166.4" height="84" fill="#ffffff" stroke="#c8102e" stroke-width="2"/>
+<text x="785.6" y="93" fill="#c8102e" font-weight="bold">Lead verifies</text>
+<text x="785.6" y="110" fill="#111111">opens one file:line</text>
+<text x="785.6" y="127" fill="#111111">per finding, re-runs</text>
+<text x="785.6" y="144" fill="#111111">every count</text>
+<rect x="777.6" y="186" width="166.4" height="67" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="785.6" y="207" fill="#111111" font-weight="bold">Report</text>
+<text x="785.6" y="224" fill="#111111">which agent found</text>
+<text x="785.6" y="241" fill="#111111">what, with its model</text>
+</svg>

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 286" width="960" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" role="img" aria-label="32 numbered rules close the places where Polish grammar leaves the reader a choice. A missing fact is marked, never guessed.">
+<rect width="960" height="286" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111111"/></marker></defs>
+<text x="16" y="32" font-size="15" font-weight="bold" fill="#111111">32 numbered rules close the places where Polish grammar leaves the reader a choice.</text>
+<text x="16" y="53" font-size="15" font-weight="bold" fill="#111111">A missing fact is marked, never guessed.</text>
+<polyline points="230,122.5 254,122.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="468,122.5 492,122.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="706,122.5 730,122.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="837,173 837,203" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="16" y="72" width="214" height="101" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="110" fill="#111111" font-weight="bold">Source</text>
+<text x="24" y="127" fill="#111111">a request or a text</text>
+<text x="24" y="144" fill="#111111">that people act on</text>
+<rect x="254" y="72" width="214" height="101" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="262" y="110" fill="#111111" font-weight="bold">Mode</text>
+<text x="262" y="127" fill="#111111">write, rewrite</text>
+<text x="262" y="144" fill="#111111">or check</text>
+<rect x="492" y="72" width="214" height="101" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="500" y="93" fill="#111111" font-weight="bold">Rules A to E</text>
+<text x="500" y="110" fill="#111111">words, sentence, logic,</text>
+<text x="500" y="127" fill="#111111">numbers and time,</text>
+<text x="500" y="144" fill="#111111">structure;</text>
+<text x="500" y="161" fill="#111111">module F: sources</text>
+<rect x="730" y="72" width="214" height="101" fill="#ffffff" stroke="#c8102e" stroke-width="2"/>
+<text x="738" y="93" fill="#c8102e" font-weight="bold">Control, 7 steps</text>
+<text x="738" y="110" fill="#111111">word count by script,</text>
+<text x="738" y="127" fill="#111111">banned words, doer,</text>
+<text x="738" y="144" fill="#111111">numbers, dates, terms,</text>
+<text x="738" y="161" fill="#111111">two-meanings test</text>
+<rect x="730" y="203" width="214" height="67" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="738" y="224" fill="#111111" font-weight="bold">Output</text>
+<text x="738" y="241" fill="#111111">text in PK and the table</text>
+<text x="738" y="258" fill="#111111">"Decisions and gaps"</text>
+</svg>

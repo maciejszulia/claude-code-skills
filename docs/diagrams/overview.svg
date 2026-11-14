@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 349" width="960" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" role="img" aria-label="One lead session plans and verifies. Subagents read, workers write the code, hooks keep the memory. Each skill covers one stage of that loop.">
+<rect width="960" height="349" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111111"/></marker></defs>
+<text x="16" y="32" font-size="15" font-weight="bold" fill="#111111">One lead session plans and verifies. Subagents read, workers write the code,</text>
+<text x="16" y="53" font-size="15" font-weight="bold" fill="#111111">hooks keep the memory. Each skill covers one stage of that loop.</text>
+<polyline points="182.4,97 206.4,97" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="372.8,97 396.8,97" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="563.2,97 587.2,97" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="753.6,97 777.6,97" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="99.2,122 99.2,152" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="99.2,236 99.2,266" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="289.6,122 289.6,152" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="480,122 480,152" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="480,236 480,266" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="670.4,122 670.4,152" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="670.4,236 670.4,266" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="860.8,122 860.8,152" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="16" y="72" width="166.4" height="50" fill="#f2f2f2" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="93" fill="#111111" font-weight="bold">Context</text>
+<text x="24" y="110" fill="#111111">memory and rules</text>
+<rect x="206.4" y="72" width="166.4" height="50" fill="#f2f2f2" stroke="#111111" stroke-width="1.5"/>
+<text x="214.4" y="93" fill="#111111" font-weight="bold">Understand</text>
+<text x="214.4" y="110" fill="#111111">what is wanted</text>
+<rect x="396.8" y="72" width="166.4" height="50" fill="#f2f2f2" stroke="#111111" stroke-width="1.5"/>
+<text x="404.8" y="93" fill="#111111" font-weight="bold">Delegate</text>
+<text x="404.8" y="110" fill="#111111">reading and coding</text>
+<rect x="587.2" y="72" width="166.4" height="50" fill="#f2f2f2" stroke="#111111" stroke-width="1.5"/>
+<text x="595.2" y="93" fill="#111111" font-weight="bold">Receive</text>
+<text x="595.2" y="110" fill="#111111">check the result</text>
+<rect x="777.6" y="72" width="166.4" height="50" fill="#f2f2f2" stroke="#111111" stroke-width="1.5"/>
+<text x="785.6" y="93" fill="#111111" font-weight="bold">Report</text>
+<text x="785.6" y="110" fill="#111111">text people act on</text>
+<rect x="16" y="152" width="166.4" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="173" fill="#c8102e" font-weight="bold">sb-mem</text>
+<text x="24" y="190" fill="#111111">journal of every</text>
+<text x="24" y="207" fill="#111111">session, recalled</text>
+<text x="24" y="224" fill="#111111">at the next start</text>
+<rect x="16" y="266" width="166.4" height="67" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="287" fill="#c8102e" font-weight="bold">reload</text>
+<text x="24" y="304" fill="#111111">rules back in front</text>
+<text x="24" y="321" fill="#111111">in a long session</text>
+<rect x="206.4" y="152" width="166.4" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="214.4" y="181.5" fill="#c8102e" font-weight="bold">tractatus-sense</text>
+<text x="214.4" y="198.5" fill="#111111">truth-conditions</text>
+<text x="214.4" y="215.5" fill="#111111">of the request</text>
+<rect x="396.8" y="152" width="166.4" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="404.8" y="181.5" fill="#c8102e" font-weight="bold">claude-team</text>
+<text x="404.8" y="198.5" fill="#111111">subagents read,</text>
+<text x="404.8" y="215.5" fill="#111111">verify and draft</text>
+<rect x="396.8" y="266" width="166.4" height="67" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="404.8" y="287" fill="#c8102e" font-weight="bold">omx-delivery</text>
+<text x="404.8" y="304" fill="#111111">a Codex worker</text>
+<text x="404.8" y="321" fill="#111111">writes the code</text>
+<rect x="587.2" y="152" width="166.4" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="595.2" y="181.5" fill="#c8102e" font-weight="bold">drift-check</text>
+<text x="595.2" y="198.5" fill="#111111">the diff against</text>
+<text x="595.2" y="215.5" fill="#111111">the stated intent</text>
+<rect x="587.2" y="266" width="166.4" height="67" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="595.2" y="287" fill="#c8102e" font-weight="bold">tractatus-verify</text>
+<text x="595.2" y="304" fill="#111111">the claim against</text>
+<text x="595.2" y="321" fill="#111111">reality</text>
+<rect x="777.6" y="152" width="166.4" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="785.6" y="173" fill="#c8102e" font-weight="bold">polszczyzna-</text>
+<text x="785.6" y="190" fill="#c8102e" font-weight="bold">kontrolowana</text>
+<text x="785.6" y="207" fill="#111111">one meaning</text>
+<text x="785.6" y="224" fill="#111111">per sentence</text>
+</svg>

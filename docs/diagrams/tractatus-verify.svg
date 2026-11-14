@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 286" width="960" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" role="img" aria-label="&quot;Done&quot; is a conjunction. Each part is compared with reality, and a part that was not compared is reported as unverified.">
+<rect width="960" height="286" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111111"/></marker></defs>
+<text x="16" y="32" font-size="15" font-weight="bold" fill="#111111">"Done" is a conjunction. Each part is compared with reality,</text>
+<text x="16" y="53" font-size="15" font-weight="bold" fill="#111111">and a part that was not compared is reported as unverified.</text>
+<polyline points="230,114 254,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="468,114 492,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="706,114 730,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="837,156 837,186" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="16" y="72" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="101.5" fill="#111111" font-weight="bold">Claim</text>
+<text x="24" y="118.5" fill="#111111">done, fixed,</text>
+<text x="24" y="135.5" fill="#111111">deployed, sent</text>
+<rect x="254" y="72" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="262" y="110" fill="#111111" font-weight="bold">Elementary propositions</text>
+<text x="262" y="127" fill="#111111">one observable state each</text>
+<rect x="492" y="72" width="214" height="84" fill="#ffffff" stroke="#c8102e" stroke-width="2"/>
+<text x="500" y="93" fill="#c8102e" font-weight="bold">Compare with reality</text>
+<text x="500" y="110" fill="#111111">a command, a fetch,</text>
+<text x="500" y="127" fill="#111111">a read of the live</text>
+<text x="500" y="144" fill="#111111">location</text>
+<rect x="730" y="72" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="738" y="101.5" fill="#111111" font-weight="bold">Truth table</text>
+<text x="738" y="118.5" fill="#111111">T, F or ? with the</text>
+<text x="738" y="135.5" fill="#111111">evidence for each row</text>
+<rect x="730" y="186" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="738" y="207" fill="#111111" font-weight="bold">Verdict</text>
+<text x="738" y="224" fill="#111111">"done" only when every</text>
+<text x="738" y="241" fill="#111111">row is T; ? stays</text>
+<text x="738" y="258" fill="#111111">unverified</text>
+</svg>

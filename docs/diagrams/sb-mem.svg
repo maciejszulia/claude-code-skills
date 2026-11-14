@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 303" width="960" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" role="img" aria-label="Hooks write every prompt, answer, file write and commit to plain Markdown pages. The next session starts with those pages; the skill searches them.">
+<rect width="960" height="303" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111111"/></marker></defs>
+<text x="16" y="32" font-size="15" font-weight="bold" fill="#111111">Hooks write every prompt, answer, file write and commit to plain Markdown pages.</text>
+<text x="16" y="53" font-size="15" font-weight="bold" fill="#111111">The next session starts with those pages; the skill searches them.</text>
+<polyline points="230,122.5 254,122.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="468,122.5 492,122.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="230,245 254,245" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="468,245 492,245" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="706,122.5 730,122.5" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="706,245 730,245" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="16" y="72" width="214" height="101" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="101.5" fill="#111111" font-weight="bold">Claude Code events</text>
+<text x="24" y="118.5" fill="#111111">prompt, answer,</text>
+<text x="24" y="135.5" fill="#111111">Write, Edit,</text>
+<text x="24" y="152.5" fill="#111111">git commit, git push</text>
+<rect x="254" y="72" width="214" height="101" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="262" y="101.5" fill="#111111" font-weight="bold">dziennik.py (hook)</text>
+<text x="262" y="118.5" fill="#111111">one line per event;</text>
+<text x="262" y="135.5" fill="#111111">secrets, e-mails and</text>
+<text x="262" y="152.5" fill="#111111">phone numbers cut</text>
+<rect x="16" y="203" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="232.5" fill="#111111" font-weight="bold">Session end</text>
+<text x="24" y="249.5" fill="#111111">at least 3 new lines</text>
+<text x="24" y="266.5" fill="#111111">in the journal</text>
+<rect x="254" y="203" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="262" y="224" fill="#111111" font-weight="bold">sb-summarize.py (hook)</text>
+<text x="262" y="241" fill="#111111">one-line summary</text>
+<text x="262" y="258" fill="#111111">by a small model,</text>
+<text x="262" y="275" fill="#111111">detached process</text>
+<rect x="492" y="72" width="214" height="215" fill="#ffffff" stroke="#c8102e" stroke-width="2"/>
+<text x="500" y="124.5" fill="#c8102e" font-weight="bold">SilverBullet space</text>
+<text x="500" y="141.5" fill="#111111">plain Markdown:</text>
+<text x="500" y="158.5" fill="#111111">dziennik/&lt;date&gt;.md</text>
+<text x="500" y="175.5" fill="#111111">sessions.md</text>
+<text x="500" y="192.5" fill="#111111">handoffs/</text>
+<text x="500" y="209.5" fill="#111111">papercuts.md</text>
+<text x="500" y="226.5" fill="#111111">decisions/</text>
+<text x="500" y="243.5" fill="#111111">runbooks/</text>
+<rect x="730" y="72" width="214" height="101" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="738" y="93" fill="#111111" font-weight="bold">sb-recall.py (hook)</text>
+<text x="738" y="110" fill="#111111">session start: cards</text>
+<text x="738" y="127" fill="#111111">of the last 3 days;</text>
+<text x="738" y="144" fill="#111111">before Read: lines</text>
+<text x="738" y="161" fill="#111111">about that file</text>
+<rect x="730" y="203" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="738" y="224" fill="#c8102e" font-weight="bold">sb-mem (skill)</text>
+<text x="738" y="241" fill="#111111">search, timeline,</text>
+<text x="738" y="258" fill="#111111">save: rg and sed</text>
+<text x="738" y="275" fill="#111111">are the engine</text>
+</svg>
