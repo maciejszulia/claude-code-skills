@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 269" width="960" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="12.5" role="img" aria-label="The reader learns what the project does in 30 s and runs it in 5 min. After a large commit without README changes, readme-guard asks for one.">
+<rect width="960" height="269" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#111111"/></marker></defs>
+<text x="16" y="32" font-size="15" font-weight="bold" fill="#111111">The reader learns what the project does in 30 s and runs it in 5 min.</text>
+<text x="16" y="53" font-size="15" font-weight="bold" fill="#111111">After a large commit without README changes, readme-guard asks for one.</text>
+<polyline points="230,114 254,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="468,114 492,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="706,114 730,114" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="837,156 837,186" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="16" y="72" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="24" y="93" fill="#111111" font-weight="bold">Facts</text>
+<text x="24" y="110" fill="#111111">git log, file tree,</text>
+<text x="24" y="127" fill="#111111">manifest, CI,</text>
+<text x="24" y="144" fill="#111111">measurements</text>
+<rect x="254" y="72" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="262" y="93" fill="#111111" font-weight="bold">Sections</text>
+<text x="262" y="110" fill="#111111">one sentence, demo,</text>
+<text x="262" y="127" fill="#111111">results, quick start,</text>
+<text x="262" y="144" fill="#111111">how it works, limits</text>
+<rect x="492" y="72" width="214" height="84" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="500" y="93" fill="#111111" font-weight="bold">Owner rules</text>
+<text x="500" y="110" fill="#111111">plain tone, owner</text>
+<text x="500" y="127" fill="#111111">as author, LaTeX,</text>
+<text x="500" y="144" fill="#111111">no personal data</text>
+<rect x="730" y="72" width="214" height="84" fill="#ffffff" stroke="#c8102e" stroke-width="2"/>
+<text x="738" y="93" fill="#c8102e" font-weight="bold">Check</text>
+<text x="738" y="110" fill="#111111">run every command,</text>
+<text x="738" y="127" fill="#111111">open every link,</text>
+<text x="738" y="144" fill="#111111">pklint for Polish</text>
+<rect x="730" y="186" width="214" height="67" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+<text x="738" y="207" fill="#111111" font-weight="bold">Commit</text>
+<text x="738" y="224" fill="#111111">with the code</text>
+<text x="738" y="241" fill="#111111">or as docs: ...</text>
+</svg>

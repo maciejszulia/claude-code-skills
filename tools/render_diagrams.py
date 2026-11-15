@@ -129,6 +129,19 @@ DIAGRAMS = {
         ],
         "edges": [("limit", "give"), ("give", "take"), ("take", "drift"), ("drift", "queue")],
     },
+    "github-readme": {
+        "title": ["The reader learns what the project does in 30 s and runs it in 5 min.",
+                  "After a large commit without README changes, readme-guard asks for one."],
+        "cols": 4,
+        "nodes": [
+            node("facts", 0, 0, ["Facts", "git log, file tree,", "manifest, CI,", "measurements"]),
+            node("sections", 1, 0, ["Sections", "one sentence, demo,", "results, quick start,", "how it works, limits"]),
+            node("rules", 2, 0, ["Owner rules", "plain tone, owner", "as author, LaTeX,", "no personal data"]),
+            node("check", 3, 0, ["Check", "run every command,", "open every link,", "pklint for Polish"], "accent"),
+            node("commit", 3, 1, ["Commit", "with the code", "or as docs: ..."]),
+        ],
+        "edges": [("facts", "sections"), ("sections", "rules"), ("rules", "check"), ("check", "commit")],
+    },
     "reload": {
         "title": ["Long contexts dilute instructions that sit far from the end.",
                   "reload puts the rules for the current task back in front."],

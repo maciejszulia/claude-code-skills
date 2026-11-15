@@ -54,7 +54,8 @@ Wykonaj każdy krok w tej kolejności:
    Lider zostaje przy decyzjach, odbiorze pracy i raporcie dla ownera. Każdy subagent pracuje na modelu Opus, Sonnet albo Haiku (reguła ownera z 2026-09-15). Codeks i OMX czekają na decyzję ownera (reguła z 2026-10-06).
 
    Kryterium: każde zadanie z kolejki ma wykonawcę albo status „czeka na ownera”.
-5. Przed startem subagentów pokaż ownerowi tabelę floty (rola, typ agenta, model i effort, liczba), koszt w tokenach i ETA.
+5. Przejrzyj każdą pozycję listy `fable-review` w work_state (skille, hooki, serwery MCP od innych modeli). Zapisz przy pozycji wynik: „przyjęte” albo lista poprawek.
+6. Przed startem subagentów pokaż ownerowi tabelę floty (rola, typ agenta, model i effort, liczba), koszt w tokenach i ETA.
 
 ## Hooki
 

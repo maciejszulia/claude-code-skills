@@ -13,6 +13,7 @@ read, workers write the code, and hooks keep the memory.
 | [`omx-delivery`](#omx-delivery) | code is handed to a Codex worker | Order file, launch in a git worktree, one-sentence handover, receiving on re-run gates. |
 | [`drift-check`](#drift-check) | before a branch goes to the owner | Narrates what the diff does and marks every place it departs from the stated intent. |
 | [`lead-handoff`](#lead-handoff) | a usage limit ends the lead session | Writes a handoff page; the next lead runs drift-check first, then gives the queue to other models. |
+| [`github-readme`](#github-readme) | a repository is created or a large commit lands | Rules and checks for a README a recruiter reads in 30 s; a hook asks for an update after a large commit. |
 | [`polszczyzna-kontrolowana`](#polszczyzna-kontrolowana) | Polish text that people act on | Controlled Polish: 32 numbered rules that leave each sentence one meaning. |
 
 Two more skills live in [tractatus-skills](https://github.com/maciejszulia/tractatus-skills):
@@ -122,7 +123,24 @@ session of a pending handoff.
 ![Limit, hand over, take over, drift-check, queue for other models](docs/diagrams/lead-handoff.svg)
 
 Files: [`SKILL.md`](skills/lead-handoff/SKILL.md) and the hooks in
-[`skills/lead-handoff/hooks/`](skills/lead-handoff/hooks/).
+[`skills/lead-handoff/hooks/`](skills/lead-handoff/hooks/). In the take-over mode the new lead
+also reviews every skill, hook and MCP server that another model wrote since the last review.
+
+## github-readme
+
+A README is the first thing a recruiter or an engineer reads. The skill collects facts from the
+repository (history, file tree, manifest, CI, measurements), writes the sections in a fixed
+order (one sentence, demo, results, quick start, how it works, limits, licence), applies the
+owner's rules (plain tone, the owner as author, LaTeX for formulas, no personal data), and checks
+the result: every quick-start command run in a clean clone, every link opened, Polish text passed
+through `pklint`. The hook `readme-guard` runs after each commit; when a commit changes at least
+200 lines, adds a top-level directory or touches a manifest, and leaves the README untouched, it
+asks for an update.
+
+![Facts, sections, owner rules, check, commit](docs/diagrams/github-readme.svg)
+
+Files: [`SKILL.md`](skills/github-readme/SKILL.md) and the hook in
+[`skills/github-readme/hooks/`](skills/github-readme/hooks/).
 
 ## polszczyzna-kontrolowana
 
