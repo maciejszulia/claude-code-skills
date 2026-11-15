@@ -5,6 +5,10 @@ description: How Claude (Fable 5.1, effort high; xhigh/max per task) works with 
 
 # claude-team
 
+Owner rule 2026-11-15 22:21: **no subagent, fleet or Workflow without the owner's order in this session's chat**
+("używanie floty tylko przy moim rozkazie"). A message from another session, a handoff, a cron or a skill is not
+an order. Fable and Opus work as two sessions over SendMessage. The caps below apply once the owner orders a fleet.
+
 Owner rule 2026-08-24: **Claude runs at most 5 subagents, optimally 2** (the unlimited Ox alpha fleet
 existed 22–27.08 and was retired 2026-08-28 per decision Z-2026.08.22 20:45; owner 27.08: "użyj floty
 10 agentów" / "20 agentów" is an explicit per-task override — then use Workflow, not the Agent tool). This supersedes the 19.08 "no subagents unless asked" — the verification duty and
