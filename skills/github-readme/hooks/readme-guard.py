@@ -21,10 +21,20 @@ MSG = ("README-GUARD: commit {sha} w repo {repo} to duża zmiana ({why}), a READ
 
 
 def repo_dir(command, cwd):
-    m = re.search(r"git\s+-C\s+(\"[^\"]+\"|'[^']+'|\S+)", command)
-    if not m:
-        m = re.search(r"(?:^|&&|;)\s*cd\s+(\"[^\"]+\"|'[^']+'|\S+)\s*&&", command)
-    return os.path.expanduser(m.group(1).strip("\"'")) if m else cwd
+    """Repo of the commit: `git -C X commit`, else the last `cd X` before the commit, else cwd."""
+    hit = re.search(r"\bgit\b(?P<args>[^\n;&|]*?)\b(commit|merge)\b", command)
+    if not hit:
+        return cwd
+    m = re.search(r"-C\s+(\"[^\"]+\"|'[^']+'|\S+)", hit.group("args"))
+    if m:
+        return os.path.expanduser(m.group(1).strip("\"'"))
+    before = command[:hit.start()]
+    cds = re.findall(r"(?:^|&&|;)\s*cd\s+(\"[^\"]+\"|'[^']+'|\S+)", before)
+    if not cds:
+        return cwd
+    env = dict(os.environ, **dict(re.findall(r"(?:^|[;&\s])(\w+)=([^\s;&|]+)", before)))
+    target = re.sub(r"\$\{?(\w+)\}?", lambda v: env.get(v.group(1), v.group(0)), cds[-1].strip("\"'"))
+    return os.path.expanduser(target)
 
 
 def reasons(numstat, added, prev_top):
@@ -60,6 +70,10 @@ def selftest():
     assert reasons("3\t1\tsrc/a.py", [], ["src"]) == []                                   # small change
     assert repo_dir("git -C ~/x commit -m y", "/w") == os.path.expanduser("~/x")
     assert repo_dir("cd /r/p && git commit -m y", "/w") == "/r/p"
+    # the cd right before the commit wins, not the first cd of the command (false alarm of 2026-11-15)
+    assert repo_dir("cd /a && x; cd /b && git commit -m y", "/w") == "/b"
+    assert repo_dir("git -C /other status; cd /b && git commit -m y", "/w") == "/b"
+    assert repo_dir("S=~/sb; cd $S && git commit -q -m z", "/w") == os.path.expanduser("~/sb")
     return "ok"
 
 
