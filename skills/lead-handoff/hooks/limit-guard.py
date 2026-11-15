@@ -6,11 +6,16 @@ UserPromptSubmit and PostToolUse, lead session only (subagent transcripts live u
 1. When the 5-hour or the 7-day window of ~/.claude/rate_limits.json reaches 90 %, inject once per window an
    instruction to ask the owner whether to keep working here or hand the work elsewhere.
 2. When that window has reset, inject once an instruction to run the drift-check skill before any further work.
+3. When a window newly reaches 90 %, push an alarm to the owner's phone with ntfy-push (algedonic channel of the
+   Viable System Model, owner rule of 2026-11-15). No ntfy-push on the machine means no alarm.
 Never blocks: every error is silent and the exit code is 0. `--selftest` runs the self-check.
 """
 import json
 import os
+import shutil
+import subprocess
 import sys
+import tempfile
 import time
 
 LIMITS = os.environ.get("LIMIT_GUARD_LIMITS", os.path.expanduser("~/.claude/rate_limits.json"))
@@ -50,6 +55,21 @@ def decide(limits, state, now):
     return out, {"asked": asked, "drift": drift}
 
 
+def newly_asked(old, new):
+    """Windows whose 90 % question was raised by this call (their reset time in "asked" changed)."""
+    before = old.get("asked", {})
+    return [k for k, v in new.get("asked", {}).items() if before.get(k) != v]
+
+
+def alarm(body):
+    """Push one alarm with ntfy-push (default topic of the owner's ntfy rule). Silent when ntfy-push is missing."""
+    # ponytail: only the limit signal is automatic. Secret in a public repo, deadline in < 24 h and an employer reply
+    # rely on the agent calling ntfy-push; upgrade path: a hook on `gh repo create/edit` and a check in the inbox script.
+    cmd = shutil.which("ntfy-push") or os.path.expanduser("~/.local/bin/ntfy-push")
+    if os.access(cmd, os.X_OK):
+        subprocess.run([cmd, "ALARM: limit Claude", body], capture_output=True, timeout=15)
+
+
 def selftest():
     t0 = 1_800_000_000
     lim = {"five_hour": {"used_percentage": 95, "resets_at": t0 + 600}, "seven_day": {"used_percentage": 60, "resets_at": t0 + 9999}}
@@ -62,6 +82,20 @@ def selftest():
     assert len(msgs) == 1 and "drift-check" in msgs[0], msgs  # drift-check right after the reset
     msgs, st = decide(after, st, t0 + 800)
     assert msgs == [] and st == {"asked": {}, "drift": {}}, (msgs, st)
+    assert newly_asked({}, {"asked": {"five_hour": 5}}) == ["five_hour"]
+    assert newly_asked({"asked": {"five_hour": 5}}, {"asked": {"five_hour": 5}}) == []    # no repeat alarm
+    with tempfile.TemporaryDirectory() as tmp:                                           # fake ntfy-push, no real push
+        fake, log = os.path.join(tmp, "ntfy-push"), os.path.join(tmp, "argv")
+        with open(fake, "w") as fh:
+            fh.write(f'#!/bin/sh\nprintf "%s|" "$@" > "{log}"\n')
+        os.chmod(fake, 0o755)
+        path = os.environ.get("PATH", "")
+        os.environ["PATH"] = tmp + os.pathsep + path
+        try:
+            alarm("5 h: 95 %, reset 10:00")
+        finally:
+            os.environ["PATH"] = path
+        assert open(log).read() == "ALARM: limit Claude|5 h: 95 %, reset 10:00|", open(log).read()
     return "ok"
 
 
@@ -88,6 +122,11 @@ def main():
         if msgs:
             event = hook.get("hook_event_name") or "PostToolUse"
             print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": "\n".join(msgs)}}, ensure_ascii=False))
+            sys.stdout.flush()
+        for key in newly_asked(state, new_state):
+            w = limits.get(key) or {}
+            alarm(f"Limit {NAMES[key]}: {round(w.get('used_percentage', 0))} %, reset {hhmm(w.get('resets_at'))}. "
+                  "Sesja lidera pyta, co dalej.")
     except Exception:
         pass
 

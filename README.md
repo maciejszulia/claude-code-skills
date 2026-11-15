@@ -11,7 +11,7 @@ read, workers write the code, and hooks keep the memory.
 | [`reload`](#reload) | a long session drifts, or after `/compact` | Re-reads the rule files and restates the rules that govern the current task. |
 | [`claude-team`](#claude-team) | before a subagent is spawned | Sets roles, caps, the six-part brief and how to verify what comes back. |
 | [`omx-delivery`](#omx-delivery) | code is handed to a Codex worker | Order file, launch in a git worktree, one-sentence handover, receiving on re-run gates. |
-| [`drift-check`](#drift-check) | before a branch goes to the owner | Narrates what the diff does and marks every place it departs from the stated intent. |
+| [`drift-check`](#drift-check) | before a branch goes to the owner, and every morning | Narrates what the diff does and marks every place it departs from the stated intent; a second mode checks every open session. |
 | [`lead-handoff`](#lead-handoff) | a usage limit ends the lead session | Writes a handoff page; the next lead runs drift-check first, then gives the queue to other models. |
 | [`github-readme`](#github-readme) | a repository is created or a large commit lands | Rules and checks for a README a recruiter reads in 30 s; a hook asks for an update after a large commit. |
 | [`polszczyzna-kontrolowana`](#polszczyzna-kontrolowana) | Polish text that people act on | Controlled Polish: 32 numbered rules that leave each sentence one meaning. |
@@ -106,7 +106,15 @@ read-only and ends with one question per drift: keep, revert or change.
 
 ![Intent, diff, narration, marked drift, list of questions](docs/diagrams/drift-check.svg)
 
-File: [`SKILL.md`](skills/drift-check/SKILL.md).
+A second mode checks every Claude Code session that is open on the machine, one report per
+morning. `open_sessions.py` reads the session registry (`~/.claude/sessions/*.json`; the `*.key`
+files are never opened), `session_digest.py` turns each transcript into the owner's prompts, the
+agents, commits, written files and final answers, and `grep_transcript.py` finds a quote with
+its time. Each claim is then checked against git and the files. The report ends with questions
+to the owner, each with a decision class (A, B or C), a recommendation and a deadline. The
+scripts use the standard library only; each has `--selftest`.
+
+Files: [`SKILL.md`](skills/drift-check/SKILL.md), [`scripts/`](skills/drift-check/scripts).
 
 ## lead-handoff
 
@@ -118,7 +126,8 @@ In the take-over mode the incoming lead, by default Fable 5.2 at max effort, rea
 runs `drift-check` before any new work, and gives the queue to other models according to
 `claude-team`. Two hooks drive it: `limit-guard` asks the owner what to do at 90 % of the
 5-hour or 7-day limit and asks for `drift-check` after the reset; `lead-takeover` reminds a new
-session of a pending handoff.
+session of a pending handoff. When an `ntfy-push` command exists, `limit-guard` also sends one
+phone alarm per window.
 
 ![Limit, hand over, take over, drift-check, queue for other models](docs/diagrams/lead-handoff.svg)
 
