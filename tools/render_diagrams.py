@@ -116,6 +116,19 @@ DIAGRAMS = {
         ],
         "edges": [("intent", "diff"), ("diff", "story"), ("story", "bold"), ("bold", "list")],
     },
+    "lead-handoff": {
+        "title": ["When a usage limit ends the lead session, the work moves to the next lead.",
+                  "Fable 5.2 reads the handoff, runs drift-check first, then gives out the queue."],
+        "cols": 4,
+        "nodes": [
+            node("limit", 0, 0, ["Limit at 90 %", "limit-guard asks", "the owner what", "happens next"]),
+            node("give", 1, 0, ["Hand over", "handoff page in", "SilverBullet and", "a pending file"]),
+            node("take", 2, 0, ["Take over", "Fable 5.2, max effort,", "reads the handoff", "in full"]),
+            node("drift", 3, 0, ["drift-check", "first, before", "any new work"], "accent"),
+            node("queue", 3, 1, ["Queue", "Opus, Sonnet, Haiku,", "Hermes; the lead", "decides and receives"]),
+        ],
+        "edges": [("limit", "give"), ("give", "take"), ("take", "drift"), ("drift", "queue")],
+    },
     "reload": {
         "title": ["Long contexts dilute instructions that sit far from the end.",
                   "reload puts the rules for the current task back in front."],

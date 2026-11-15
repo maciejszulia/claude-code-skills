@@ -12,6 +12,7 @@ read, workers write the code, and hooks keep the memory.
 | [`claude-team`](#claude-team) | before a subagent is spawned | Sets roles, caps, the six-part brief and how to verify what comes back. |
 | [`omx-delivery`](#omx-delivery) | code is handed to a Codex worker | Order file, launch in a git worktree, one-sentence handover, receiving on re-run gates. |
 | [`drift-check`](#drift-check) | before a branch goes to the owner | Narrates what the diff does and marks every place it departs from the stated intent. |
+| [`lead-handoff`](#lead-handoff) | a usage limit ends the lead session | Writes a handoff page; the next lead runs drift-check first, then gives the queue to other models. |
 | [`polszczyzna-kontrolowana`](#polszczyzna-kontrolowana) | Polish text that people act on | Controlled Polish: 32 numbered rules that leave each sentence one meaning. |
 
 Two more skills live in [tractatus-skills](https://github.com/maciejszulia/tractatus-skills):
@@ -105,6 +106,23 @@ read-only and ends with one question per drift: keep, revert or change.
 ![Intent, diff, narration, marked drift, list of questions](docs/diagrams/drift-check.svg)
 
 File: [`SKILL.md`](skills/drift-check/SKILL.md).
+
+## lead-handoff
+
+A usage limit can end the lead session in the middle of the work. In the hand-over mode the
+outgoing lead writes a handoff page in SilverBullet: the goal, the owner's orders of the day,
+the state, every repository with its newest commit, the queue with a completion criterion per
+task, the steps that wait for the owner, and the limits. The page path goes to a pending file.
+In the take-over mode the incoming lead, by default Fable 5.2 at max effort, reads the page,
+runs `drift-check` before any new work, and gives the queue to other models according to
+`claude-team`. Two hooks drive it: `limit-guard` asks the owner what to do at 90 % of the
+5-hour or 7-day limit and asks for `drift-check` after the reset; `lead-takeover` reminds a new
+session of a pending handoff.
+
+![Limit, hand over, take over, drift-check, queue for other models](docs/diagrams/lead-handoff.svg)
+
+Files: [`SKILL.md`](skills/lead-handoff/SKILL.md) and the hooks in
+[`skills/lead-handoff/hooks/`](skills/lead-handoff/hooks/).
 
 ## polszczyzna-kontrolowana
 
