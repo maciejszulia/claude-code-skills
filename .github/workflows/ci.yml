@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Self-checks of the scripts and hooks (standard library only)
+        run: |
+          python3 -B skills/drift-check/scripts/grep_transcript.py --selftest
+          python3 -B skills/drift-check/scripts/open_sessions.py --selftest
+          python3 -B skills/drift-check/scripts/session_digest.py --selftest
+          python3 -B skills/github-readme/hooks/readme-guard.py --selftest
+          python3 -B skills/lead-handoff/hooks/lead-takeover.py --selftest
+          python3 -B skills/lead-handoff/hooks/limit-guard.py --selftest
