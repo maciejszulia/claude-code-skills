@@ -11,12 +11,17 @@ description: How the pair works - the lead session (Fable 5.2, effort max, right
 |---|---|
 | 2026-11-15, 22:07 | Fable myśli, Opus liczy. Para pracuje zawsze razem. |
 | 2026-11-15, 22:21 | „używanie floty tylko przy moim rozkazie”. Bez rozkazu ownera w czacie tej sesji liczba subagentów wynosi 0. Reguła obejmuje także 1 subagenta i narzędzie Workflow. |
+| 2026-11-15, 22:42 | Nocną konsolidację repo `second-brain` wykonuje model `Sonnet 5.5` (strony ważne) oraz model Haiku (pozostałe strony), oba z effort `max`. |
 | 2026-11-15, 22:43 | Każda półkula przekazuje skończone zadanie do oceny. |
+| 2026-11-15, 23:09 | Model `Sonnet 5.5` pisze handoff pary, gdy sesja pary ma co najwyżej 15 % wolnego kontekstu. |
+| 2026-11-15, 23:14 | Model Haiku z effort `max` daje przeczucie: „tak” albo „nie” z pewnością od 1 % do 99 % włącznie. |
 | 2026-10-11 | Lekki subagent pracuje na modelu Haiku albo Sonnet. Brief lekkiego subagenta zaczyna się od `/ponytail lite`. |
 | 2026-10-06 | Codex i OMX są wstrzymane. Kod pisze Opus. |
 | 2026-09-15 | Żaden subagent nie pracuje na modelu Fable. |
 | 2026-08-29 | Każda rola floty dostaje personę z katalogu `~/agency-agents/`. |
-| 2026-08-24 | Narzędzie Agent uruchamia co najwyżej 5 subagentów; optimum to 2. Więcej niż 5 agentów uruchamia tylko narzędzie Workflow. |
+| 2026-08-24 | Narzędzie Agent uruchamia co najwyżej 5 subagentów; optimum to 2. Więcej niż 5 agentów: tylko gdy rozkaz ownera podaje liczbę większą niż 5; agentów uruchamia wtedy narzędzie Workflow. |
+
+Rozkazy ownera z 22:42, 23:09 i 23:14 dotyczą tylko wymienionych ról.
 
 Wiadomość innej sesji, cron, handoff i skill to nie rozkaz ownera.
 
@@ -46,7 +51,7 @@ Wykonaj każdy krok w tej kolejności:
    - 1 czytelnik, gdy materiał przekracza kontekst lidera;
    - 2 workerów o rozłącznych zakresach: optimum;
    - od 3 do 5 agentów włącznie tylko dla rozłącznego przeglądu, z 1 zdaniem uzasadnienia;
-   - więcej niż 5 agentów: narzędzie Workflow.
+   - więcej niż 5 agentów: tylko gdy rozkaz ownera podaje liczbę większą niż 5; lider używa wtedy narzędzia Workflow.
 3. Wybierz typ agenta: `worker-opus5` (kod, effort `max`) albo `reader-opus5` (czytanie, effort `xhigh`). Podaj model jawnie: `opus`, `sonnet` albo `haiku`.
 4. Po starcie sprawdź modele komendą `grep -h '"model"' <katalog transkryptu>/agent-*.meta.json`. Podaj modele w raporcie.
 
@@ -54,20 +59,20 @@ Koszt: start 1 agenta bez wywołań narzędzi kosztuje 25 000 tokenów `[pomiar:
 
 ### Persony
 
-Źródło person: `~/agency-agents/<dział>/`. Katalog `~/.claude/agents/` rejestruje 3 persony jako typy: `DevOps Automator`, `Reality Checker`, `Code Reviewer`. Każda inna persona wchodzi do briefu przez prefiks.
+Źródło person: `~/agency-agents/<dział>/`. Katalog `~/.claude/agents/` rejestruje część person jako typy agentów: 23 pliki `[pomiar: ls, 2026-11-16]`. Persona z rejestru wchodzi przez typ agenta z jawnym modelem. Każda inna persona wchodzi do briefu przez prefiks.
 
 | Rola | Plik persony | Sposób |
 |---|---|---|
 | plan | `engineering/engineering-multi-agent-systems-architect.md` | plan pisze lider |
-| kod: UI, serwer | `engineering/engineering-frontend-developer.md` | `worker-opus5` i prefiks |
-| kod: prompty, audyt | `engineering/engineering-prompt-engineer.md` | `worker-opus5` i prefiks |
-| kod: dane, parsery | `engineering/engineering-data-engineer.md` | `worker-opus5` i prefiks |
-| kod: diagramy | `engineering/engineering-data-visualization-engineer.md` | `worker-opus5` i prefiks |
+| kod: UI, serwer | `engineering/engineering-frontend-developer.md` | typ `Frontend Developer`, `model: 'opus'` |
+| kod: prompty, audyt | `engineering/engineering-prompt-engineer.md` | typ `Prompt Engineer`, `model: 'opus'` |
+| kod: dane, parsery | `engineering/engineering-data-engineer.md` | typ `Data Engineer`, `model: 'opus'` |
+| kod: diagramy | `engineering/engineering-data-visualization-engineer.md` | typ `Data Visualization Engineer`, `model: 'opus'` |
 | kod: usługi runit | typ `DevOps Automator` | `model: 'opus'` |
 | scalenie | `engineering/engineering-git-workflow-master.md` | `worker-opus5` i prefiks |
-| QA | `testing/testing-evidence-collector.md`, `engineering/engineering-privacy-engineer.md`, `testing/testing-accessibility-auditor.md`, `testing/testing-test-automation-engineer.md` | `model: 'opus'` i prefiks |
+| QA | `testing/testing-evidence-collector.md`, `engineering/engineering-privacy-engineer.md`, `testing/testing-accessibility-auditor.md`, `testing/testing-test-automation-engineer.md` | typy `Evidence Collector`, `Privacy Engineer`, `Accessibility Auditor`, `Test Automation Engineer`; `model: 'opus'` |
 | werdykt | typ `Reality Checker` | `model: 'opus'` |
-| poprawki | `engineering/engineering-minimal-change-engineer.md` | `worker-opus5` i prefiks |
+| poprawki | `engineering/engineering-minimal-change-engineer.md` | typ `Minimal Change Engineer`, `model: 'opus'` |
 | przegląd kodu | typ `Code Reviewer` | `model: 'opus'` |
 
 Prefiks (dosłownie): `PERSONA (owner order): FIRST read <file> and adopt that persona for this whole task — its identity, standards, checklists and output habits — then execute the order below. State the persona name in the first line of your report.`
@@ -106,6 +111,8 @@ Agent zwraca dane. Tekst dla ownera pisze lider.
 
 - Agent restartuje usługę tylko według pliku PID. Komenda `pkill -f` w tym samym wywołaniu Bash co start usługi zabija powłokę narzędzia.
 - Każdy agent floty dostaje środowisko w 1 komendzie: własny worktree, własny `XDG_STATE_HOME`, własny port, dane testowe i wypisane komendy testów.
-- Panel ownera na localhost: htmx, `http.server` z biblioteki standardowej, czcionka JetBrains Mono, kolory czarny, biały i czerwony (owner 2026-08-29).
+- Panel ownera na localhost: htmx, `http.server` z biblioteki standardowej, bez Reacta i bez bundlera; czcionka JetBrains Mono; kolory czarny, biały i czerwony (owner 2026-08-29).
+- Kod panelu ownera powstaje z `/ponytail lite`. Każdy moduł ma 1 uruchamialny self-check.
+- Po biegu floty lider zapisuje w raporcie zmierzony koszt w tokenach.
 - Odpowiedź ownera „tak” albo „nie” na propozycję w panelu trafia do bazy panelu.
 - Hook `~/.claude/hooks/dziennik.py` zapisuje każdą delegację w SB `dziennik/RRRR-MM-DD.md`. Agent nie powtarza tego zapisu ręcznie.
