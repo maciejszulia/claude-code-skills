@@ -165,6 +165,23 @@ File: [`SKILL.md`](skills/polszczyzna-kontrolowana/SKILL.md). The rule set, the 
 measurement data live in their own repository:
 [polszczyzna-kontrolowana](https://github.com/maciejszulia/polszczyzna-kontrolowana).
 
+## Pair watch
+
+Two Claude Code sessions can work as a pair: a lead that plans and a worker that computes.
+[`tools/pair-watch/pair.py`](tools/pair-watch/pair.py), standard library only, keeps the pair
+going when context runs out. `context` prints the free context of a session from the `usage`
+field of its transcript and exits 2 at 15 % or less. `watch` checks the other session every 30
+seconds and prints one line per event: process gone, API error, usage limit, context limit,
+compaction, low context, busy for 15 minutes without a new entry; it never prints transcript
+text. `consolidate` has a model (Sonnet by default) write a handoff page from both transcripts,
+with the session-only crons to recreate. `start` opens the new pair in tmux; without a
+permission mode chosen by you it only prints the commands. `restart` runs both.
+
+```sh
+python3 tools/pair-watch/pair.py --selftest
+python3 tools/pair-watch/pair.py context ~/.claude/projects/<project>/<session>.jsonl
+```
+
 ## Install
 
 ```sh
