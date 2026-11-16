@@ -6,8 +6,8 @@ after GitHub and GitLab, because an error of the second URL stops `git push` bef
 
 Modes, in this order: --dry-run (plan only), --apply (create repos, add the push URL, push), --compare (hashes).
 --apply creates a missing Gitea repo with the GitHub visibility, appends the Gitea URL to the push URLs, never touches
-the fetch URL, and pushes every branch and every tag straight to the Gitea URL without force (GitHub and GitLab get
-no push). The token is read from a file and only ever sent in an HTTP header; it never reaches the output.
+the fetch URL, pushes every branch and every tag straight to the Gitea URL without force (GitHub and GitLab get
+no push), then gives the Gitea repo the GitHub default branch. The token is read from a file and only ever sent in an HTTP header; it never reaches the output.
 
 Usage: gitea_mirror.py --dry-run|--apply|--compare [--handoff PAGE] [--token-file FILE] | --selftest
 Python standard library only: the token travels in a header from process memory, not in a command line.
@@ -73,6 +73,22 @@ def api(method, path, token, body=None):
 def github_private(name):
     r = subprocess.run(["gh", "api", f"repos/{OWNER}/{name}", "--jq", ".private"], capture_output=True, text=True)
     return {"true": True, "false": False}.get(r.stdout.strip())
+
+
+def github_default_branch(name):
+    r = subprocess.run(["gh", "api", f"repos/{OWNER}/{name}", "--jq", ".default_branch"], capture_output=True, text=True)
+    return r.stdout.strip() or None
+
+
+def sync_default_branch(name, token, call=api, github=github_default_branch):
+    """(Gitea default before, GitHub default, patched). Gitea keeps the first pushed branch as default unless told."""
+    want = github(name)
+    status, repo = call("GET", f"/repos/{OWNER}/{name}", token)
+    have = (repo or {}).get("default_branch")
+    if status != 200 or not want or have == want:
+        return have, want, False
+    status, _ = call("PATCH", f"/repos/{OWNER}/{name}", token, {"default_branch": want})
+    return have, want, status == 200
 
 
 def default_branch(path, remote):
@@ -147,7 +163,8 @@ def main():
         t = subprocess.run(["git", "-C", r["path"], "push", "--quiet", r["gitea"], "--tags"], capture_output=True, text=True)
         # the Gitea URL is a push URL of the remote, so git moved <remote>/* to the Gitea state; fetch puts them back
         git(r["path"], "fetch", "--quiet", r["remote"])
-        print(line + f"\tbranches exit {b.returncode}\ttags exit {t.returncode}"
+        have, want, patched = sync_default_branch(r["name"], token)
+        print(line + f"\tbranches exit {b.returncode}\ttags exit {t.returncode}\tdefault {have}" + (f" -> {want}" if patched else "")
               + (f"\t{(b.stderr or t.stderr).strip().splitlines()[-1][:120]}" if b.returncode or t.returncode else ""))
     return 0
 
@@ -171,6 +188,16 @@ def selftest():
         _, fetch = git(repo, "remote", "get-url", "origin")
         assert fetch == "https://gitlab.com/maciejszulia/demo.git"           # the fetch URL stays as it was
         assert mirror_remote(repo)[1] == "demo"                              # a done clone is still found
+    # 2026-11-16: Gitea took the first pushed branch as default (second-brain: docs/reception-sb-hygiene-20260913)
+    calls = []
+    def fake(method, path, token, body=None, have="docs/x"):
+        calls.append((method, path, body))
+        return (200, {"default_branch": have}) if method == "GET" else (200, {})
+    assert sync_default_branch("demo", "t", fake, lambda name: "main") == ("docs/x", "main", True)
+    assert calls[-1] == ("PATCH", f"/repos/{OWNER}/demo", {"default_branch": "main"})
+    calls.clear()
+    same = lambda m, p, t, b=None: fake(m, p, t, b, have="main")
+    assert sync_default_branch("demo", "t", same, lambda name: "main") == ("main", "main", False) and len(calls) == 1
     return "ok"
 
 
