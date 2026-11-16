@@ -140,7 +140,48 @@ def main():
         file_context(d)
 
 
+def selftest():
+    """Cards, papercuts and the newest handoff come from a temporary SB space; a Read of a known file gets its lines."""
+    import contextlib
+    import io
+    import tempfile
+    import time
+    global SPACE, codex_recent
+    codex_recent = lambda project: []                                     # the real claude-mem database stays out
+    with tempfile.TemporaryDirectory() as tmp:
+        SPACE = tmp
+        for d in ("dziennik", "handoffs"):
+            os.makedirs(os.path.join(tmp, d))
+        with open(os.path.join(tmp, "dziennik", f"{datetime.date.today():%Y-%m-%d}.md"), "w", encoding="utf-8") as f:
+            f.write("- 09:00:00 | lead aaaa1111 | prompt: napisz raport\n- 09:05:00 | lead aaaa1111 | zapis: /x/plik-testowy.py\n"
+                    "- 09:10:00 | lead aaaa1111 | podsumowanie: raport gotowy\n- 10:00:00 | lead bbbb2222 | prompt: ta sesja\n"
+                    "- 10:01:00 | subagent cccc3333 | zapis: /x/y.py\n")
+        with open(os.path.join(tmp, "papercuts.md"), "w", encoding="utf-8") as f:
+            f.write("# Papercuts\n\n## Log\n\n- p1\n- p2\n- p3\n- p4\n\n## Inne\n\n- p5\n")
+        for name, age in (("2026-11-01-lead.md", 100), ("2026-11-02-lead.md", 10)):
+            path = os.path.join(tmp, "handoffs", name)
+            open(path, "w").close()
+            os.utime(path, (time.time() - age, time.time() - age))
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            session_start({"session_id": "bbbb2222xyz", "cwd": tmp})          # the current session gets no card
+        text = out.getvalue()
+        assert "aaaa1111 (3 linii): napisz raport podsumowanie: raport gotowy" in text, text
+        assert "bbbb2222" not in text and "cccc3333" not in text and "p2 ‖ p3 ‖ p4" in text and "p1" not in text, text
+        assert "Ostatni handoff: handoffs/2026-11-02-lead" in text, text
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            file_context({"tool_input": {"file_path": "/x/plik-testowy.py"}})
+            file_context({"tool_input": {"file_path": "/x/README.md"}})        # a generic name gets no context
+        ctx = json.loads(out.getvalue())["hookSpecificOutput"]["additionalContext"]
+        assert "zapis: /x/plik-testowy.py" in ctx and ctx.count("\n") == 1, ctx
+    return "ok"
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--selftest"]:
+        print(selftest())
+        sys.exit(0)
     try:
         main()
     except Exception:
