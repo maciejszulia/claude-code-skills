@@ -190,6 +190,15 @@ Gitea repository with the GitHub visibility, appends the push URL after GitHub a
 and tag to Gitea only, `--compare` checks the default branch hash. The token is read from a file and sent only in
 an HTTP header.
 
+## Nightly consolidation
+
+[`tools/second-brain-nightly/nightly.py`](tools/second-brain-nightly/nightly.py) consolidates a SilverBullet
+space at night. `--dry-run` prints four lists and changes nothing: files to commit (Markdown pages and neurophify
+outputs, by name), skipped files (a secret pattern is logged by file name only), the 20 heaviest pages by
+neurophify weight for Sonnet, and the pages changed within a day for Haiku. `--apply` writes `CORE.md` and a daily
+digest with one tool-less `claude -p` call each, commits the listed files and pushes. The runit `run` file next to
+it starts the job at 03:00 and is meant to be reviewed before installing.
+
 ## Install
 
 ```sh
