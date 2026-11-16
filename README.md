@@ -1,7 +1,7 @@
 # claude-code-skills
 
-Skills I wrote for my own Claude Code setup. One lead session plans and verifies, subagents
-read, workers write the code, and hooks keep the memory.
+Skills I wrote for my own Claude Code setup. A lead session plans, decides and verifies, a
+second session writes the code, subagents run only on my order, and hooks keep the memory.
 
 ![Each skill covers one stage of the loop: context, understand, delegate, receive, report](docs/diagrams/overview.svg)
 
@@ -9,10 +9,10 @@ read, workers write the code, and hooks keep the memory.
 |---|---|---|
 | [`sb-mem`](#sb-mem) | every session, through hooks | Keeps a journal of each session in plain Markdown and gives it back at the next start. |
 | [`reload`](#reload) | a long session drifts, or after `/compact` | Re-reads the rule files and restates the rules that govern the current task. |
-| [`claude-team`](#claude-team) | before a subagent is spawned | Sets roles, caps, the six-part brief and how to verify what comes back. |
-| [`omx-delivery`](#omx-delivery) | code is handed to a Codex worker | Order file, launch in a git worktree, one-sentence handover, receiving on re-run gates. |
+| [`claude-team`](#claude-team) | before work is split or an agent is spawned | How the pair of sessions works and how a fleet works on my order: roles, caps, the six-part brief, verification of what comes back. |
+| [`omx-delivery`](#omx-delivery) | paused since 2026-10-06; code is handed to a Codex worker | Order file, launch in a git worktree, one-sentence handover, receiving on re-run gates. |
 | [`drift-check`](#drift-check) | before a branch goes to the owner, and every morning | Narrates what the diff does and marks every place it departs from the stated intent; a second mode checks every open session. |
-| [`lead-handoff`](#lead-handoff) | a usage limit ends the lead session | Writes a handoff page; the next lead runs drift-check first, then gives the queue to other models. |
+| [`lead-handoff`](#lead-handoff) | a usage limit ends the lead session, or a session of the pair has at most 15 % of its context free | Writes a handoff page; the next lead marks the takeover, runs drift-check, then gives the computing and coding tasks to the second session. |
 | [`github-readme`](#github-readme) | a repository is created or a large commit lands | Rules and checks for a README a recruiter reads in 30 s; a hook asks for an update after a large commit. |
 | [`polszczyzna-kontrolowana`](#polszczyzna-kontrolowana) | Polish text that people act on | Controlled Polish: 32 numbered rules that leave each sentence one meaning. |
 
@@ -69,10 +69,17 @@ File: [`SKILL.md`](skills/reload/SKILL.md).
 
 ## claude-team
 
-How the lead session works with its own subagents. The lead decides, splits, briefs,
-verifies and reports. A reader does one big read and writes nothing. A worker does one
-bounded task and never pushes. The caps: at most 5 subagents, 2 is the optimum, and 0 when
-a few tool calls answer the question.
+How the work is split. Two sessions form a pair. The lead session (Fable 5.2, max effort)
+plans, decides, writes text, merges, receives the work and reports. The second session
+(Opus 5.5, max effort) computes, measures, proves, writes code and tests. Each finished task
+goes to the other session for review before I see it. Decisions have three classes: one
+session settles class A, two agreeing votes settle class B, and class C stays with me.
+
+A fleet of subagents runs only on my order in the chat of that session; without the order the
+number of subagents is 0. On an order the caps hold: at most 5 subagents through the Agent
+tool, 2 is the optimum, 0 when at most 5 tool calls answer the question, and more than 5 only
+when the order names the number. A reader does one big read and writes nothing. A worker does
+one bounded task and never pushes.
 
 ![Lead, brief, reader and worker, findings, verification, report](docs/diagrams/claude-team.svg)
 
@@ -84,8 +91,9 @@ File: [`SKILL.md`](skills/claude-team/SKILL.md).
 
 ## omx-delivery
 
-Hands a coding task to a worker running on OMX (oh-my-codex, an orchestration layer on top of
-OpenAI's Codex CLI). The order is a committed Markdown file, because a git worktree contains
+Paused since 2026-10-06: I do not work with Codex and OMX for now, and the skill says so in its
+first lines. It hands a coding task to a worker running on OMX (oh-my-codex, an orchestration
+layer on top of OpenAI's Codex CLI). The order is a committed Markdown file, because a git worktree contains
 only committed files. The worker gets one sentence that points at that file. The lead watches
 `git log` and `git status` of the worktree, then re-runs the gates named in the order before
 accepting the branch. Merge, build and deploy stay with the lead.
@@ -102,7 +110,8 @@ After a long session the change and the owner's picture of it can differ. `drift
 quotes the owner's latest statement of intent, reads the real diff, and tells the change as
 numbered steps in the order things happen at run time, each with its `file:line`. Every step
 that adds, skips or changes something the intent did not ask for is bold. The pass is
-read-only and ends with one question per drift: keep, revert or change.
+read-only and ends with one question per drift: keep, revert or change. In a pair the other
+session reviews the report before I see it.
 
 ![Intent, diff, narration, marked drift, list of questions](docs/diagrams/drift-check.svg)
 
@@ -118,13 +127,17 @@ Files: [`SKILL.md`](skills/drift-check/SKILL.md), [`scripts/`](skills/drift-chec
 
 ## lead-handoff
 
-A usage limit can end the lead session in the middle of the work. In the hand-over mode the
+A usage limit can end the lead session in the middle of the work, and a long session can run
+out of context. In the hand-over mode the
 outgoing lead writes a handoff page in SilverBullet: the goal, the owner's orders of the day,
 the state, every repository with its newest commit, the queue with a completion criterion per
 task, the steps that wait for the owner, and the limits. The page path goes to a pending file.
-In the take-over mode the incoming lead, by default Fable 5.2 at max effort, reads the page,
-runs `drift-check` before any new work, and gives the queue to other models according to
-`claude-team`. Two hooks drive it: `limit-guard` asks the owner what to do at 90 % of the
+In the take-over mode the incoming lead (Fable 5.2 at max effort) reads the page, marks the
+takeover so that exactly one lead works the queue, runs `drift-check` before any new work, and
+gives the computing, measuring and coding tasks to the second session; a subagent needs my
+order (`claude-team`). When a session of the pair has at most 15 % of its context free,
+`pair.py restart` has Sonnet 5.5 write the handoff of the pair and starts new sessions.
+Two hooks drive it: `limit-guard` asks the owner what to do at 90 % of the
 5-hour or 7-day limit and asks for `drift-check` after the reset; `lead-takeover` reminds a new
 session of a pending handoff. When an `ntfy-push` command exists, `limit-guard` also sends one
 phone alarm per window.
@@ -142,7 +155,8 @@ repository (history, file tree, manifest, CI, measurements), writes the sections
 order (one sentence, demo, results, quick start, how it works, limits, licence), applies the
 owner's rules (plain tone, the owner as author, LaTeX for formulas, no personal data), and checks
 the result: every quick-start command run in a clean clone, every link opened, Polish text passed
-through `pklint`. The hook `readme-guard` runs after each commit; when a commit changes at least
+through `pklint`, and a README test that compares each number describing the code with the
+code. In a pair the other session reviews the text before the commit. The hook `readme-guard` runs after each commit; when a commit changes at least
 200 lines, adds a top-level directory or touches a manifest, and leaves the README untouched, it
 asks for an update.
 
