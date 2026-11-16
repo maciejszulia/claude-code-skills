@@ -176,10 +176,14 @@ class Watch:
             if c is not None:
                 events.append(self.low_event(c))
         try:
-            busy = read_session(self.pid, self.registry).get("status") == "busy"
+            s = read_session(self.pid, self.registry)
         except (OSError, ValueError):
-            busy = False
-        quiet = now - os.path.getmtime(self.path)
+            s = {}
+        busy = s.get("status") == "busy"
+        # An idle compaction turns a session busy after ~54 quiet minutes; the registry stamps statusUpdatedAt
+        # (ms) on a status change, so silence counts from the later of the transcript write and that change.
+        since = s.get("statusUpdatedAt")
+        quiet = now - max(os.path.getmtime(self.path), since / 1000 if isinstance(since, (int, float)) else 0)
         if busy and quiet >= self.busy_seconds:
             if not self.stalled:
                 self.stalled = True
@@ -399,6 +403,17 @@ def selftest():
         assert w.poll(time.time()) == ["dead"]
         events = Watch(7, reg, os.path.dirname(proj), is_alive=lambda p: True).poll(time.time())
         assert events == ["context-low free=12.0%", "stalled busy=16min"], events  # a new watch reports the state now
+        # 2026-11-16 05:46: an idle compaction made the session busy after 54 quiet minutes and raised a false stall
+        tr2 = os.path.join(proj, "sid2.jsonl")
+        with open(tr2, "w", encoding="utf-8") as fh:
+            fh.write(json.dumps(reply(100_000)) + "\n")
+        t = time.time()
+        os.utime(tr2, (t - 3000, t - 3000))                                       # transcript silent for 50 min
+        for since, want in ((60, []), (1200, ["stalled busy=20min"])):
+            with open(os.path.join(reg, "8.json"), "w") as fh:
+                json.dump({"pid": 8, "sessionId": "sid2", "status": "busy", "statusUpdatedAt": int((t - since) * 1000)}, fh)
+            got = Watch(8, reg, os.path.dirname(proj), is_alive=lambda p: True).poll(t)
+            assert got == want, (since, got)
 
         now = datetime(2026, 11, 16, 3, 0)
 
