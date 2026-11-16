@@ -151,26 +151,48 @@ def main():
         print(f"pages for Sonnet ({len(core)}):", *(f"{pid}.md weight {w:.2f}" for pid, w in core), sep="\n  ")
         print(f"pages for Haiku ({len(daily)}):", *daily, sep="\n  ")
         return 0
-    day = time.strftime("%Y-%m-%d", time.localtime(now))
-    keep, skip, core, daily = plan(a.space, os.path.join(a.space, OUT, "neurophify"), now)
-    os.makedirs(os.path.join(a.space, OUT, "daily"), exist_ok=True)
-    core_md = ask_model("claude-sonnet-5-5", MERGE, pages_block(a.space, [f"{pid}.md" for pid, _ in core]))
-    with open(os.path.join(a.space, OUT, "CORE.md"), "w", encoding="utf-8") as fh:
-        fh.write(f"# CORE {day}\n\nNapisał model `claude-sonnet-5-5` (nocna konsolidacja).\n\n{core_md}\n")
-    if daily:
-        digest = ask_model("claude-haiku-5-5", DIGEST, pages_block(a.space, daily[:DAILY_PAGES]))
-        with open(os.path.join(a.space, OUT, "daily", f"{day}.md"), "w", encoding="utf-8") as fh:
-            fh.write(f"# Strony dnia {day}\n\nNapisał model `claude-haiku-5-5` (nocna konsolidacja).\n\n{digest}\n")
-    keep, skip = commit_lists(a.space, changed_files(a.space))      # the model output joins the list
-    os.makedirs(LOG_DIR, exist_ok=True)
-    with open(os.path.join(LOG_DIR, f"{day}.log"), "a", encoding="utf-8") as fh:
-        fh.writelines(f"{time.strftime('%F %T')} skipped {p} [{why}]\n" for p, why in skip)
-    if keep:
-        subprocess.run(["git", "-C", a.space, "add", "--", *keep], check=True)
-        subprocess.run(["git", "-C", a.space, "commit", "-q", "-m", f"Nightly consolidation {day}"], check=True)
-        subprocess.run(["git", "-C", a.space, "push", "-q"], check=False)
-    print(f"committed {len(keep)} files, skipped {len(skip)}, CORE from {len(core)} pages, daily {len(daily)} pages")
+    keep, skip = apply(a.space, now)
+    print(f"committed {len(keep)} files, skipped {len(skip)}; log in {LOG_DIR}")
     return 0
+
+
+def commit_listed(space, keep, message):
+    """Commit only the listed files: a file another session staged stays staged (`git commit -- paths`)."""
+    subprocess.run(["git", "-C", space, "add", "--", *keep], check=True)
+    return subprocess.run(["git", "-C", space, "commit", "-q", "-m", message, "--", *keep],
+                          capture_output=True, text=True).returncode
+
+
+def apply(space, now, ask=ask_model, log_dir=LOG_DIR):
+    """The night run: neurophify, the Sonnet and Haiku pages, a commit of the listed files, push; one log per day."""
+    day = time.strftime("%Y-%m-%d", time.localtime(now))
+    os.makedirs(log_dir, exist_ok=True)
+
+    def log(line):
+        with open(os.path.join(log_dir, f"{day}.log"), "a", encoding="utf-8") as fh:
+            fh.write(f"{time.strftime('%F %T')} {line}\n")
+
+    _, _, core, daily = plan(space, os.path.join(space, OUT, "neurophify"), now)
+    os.makedirs(os.path.join(space, OUT, "daily"), exist_ok=True)
+    jobs = [("claude-sonnet-5-5", MERGE, [f"{pid}.md" for pid, _ in core], os.path.join(space, OUT, "CORE.md"), f"# CORE {day}")]
+    if daily:
+        jobs.append(("claude-haiku-5-5", DIGEST, daily[:DAILY_PAGES], os.path.join(space, OUT, "daily", f"{day}.md"),
+                     f"# Strony dnia {day}"))
+    for model, system, pages, path, title in jobs:
+        try:
+            text = ask(model, system, pages_block(space, pages))
+        except SystemExit as e:                     # ask_model ends a failed call with SystemExit
+            log(f"model error {model}: {str(e)[:200]}")
+            continue
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(f"{title}\n\nNapisał model `{model}` (nocna konsolidacja).\n\n{text}\n")
+    keep, skip = commit_lists(space, changed_files(space))      # the model output joins the list
+    for p, why in skip:
+        log(f"skipped {p} [{why}]")
+    if keep:
+        commit_listed(space, keep, f"Nightly consolidation {day}")
+        log(f"git push exit {subprocess.run(['git', '-C', space, 'push', '-q'], capture_output=True).returncode}")
+    return keep, skip
 
 
 def selftest():
@@ -201,6 +223,29 @@ def selftest():
         daily = daily_pages(sp, {"x"}, now, ["a.md", "old.md", "c.md", f"{OUT}/CORE.md"])
         assert daily == ["a.md", "c.md"], daily                                 # old.md changed 3 days ago
         assert daily_pages(sp, {"a"}, now, ["a.md"]) == []                      # a core page goes to Sonnet only
+    with tempfile.TemporaryDirectory() as tmp:
+        sp, logs = os.path.join(tmp, "space"), os.path.join(tmp, "logs")
+        os.makedirs(sp)
+        subprocess.run(["git", "init", "-q", sp], check=True)
+        for key, value in (("user.email", "t@t"), ("user.name", "t")):
+            subprocess.run(["git", "-C", sp, "config", key, value], check=True)
+        for name, text in (("a.md", "strona a [[b]]"), ("b.md", "strona b"), ("other.py", "x = 1")):
+            with open(os.path.join(sp, name), "w", encoding="utf-8") as fh:
+                fh.write(text)
+        subprocess.run(["git", "-C", sp, "add", "other.py"], check=True)       # staged by another session
+
+        def ask(model, system, data):
+            if "sonnet" in model:
+                raise SystemExit("model call failed: exit 1: test")
+            return "streszczenie"
+
+        apply(sp, now, ask=ask, log_dir=logs)
+        committed = subprocess.run(["git", "-C", sp, "show", "--name-only", "--format=", "HEAD"],
+                                   capture_output=True, text=True).stdout.split()
+        staged = subprocess.run(["git", "-C", sp, "diff", "--cached", "--name-only"], capture_output=True, text=True).stdout.split()
+        assert "a.md" in committed and "other.py" not in committed and staged == ["other.py"], (committed, staged)
+        log = open(os.path.join(logs, time.strftime("%Y-%m-%d", time.localtime(now)) + ".log"), encoding="utf-8").read()
+        assert "model error claude-sonnet-5-5" in log and "git push exit" in log, log
     run = os.path.join(os.path.dirname(os.path.abspath(__file__)), "run")
     with open(run, encoding="utf-8") as fh:
         text = fh.read()
