@@ -1,0 +1,18 @@
+#!/bin/sh
+# runit service: the second-brain nightly consolidation at 03:00 local time.
+# NOT installed: the owner reviews this file first (night brief 2026-11-16, task N2).
+# Install (owner): ln -s ~/claude-code-skills/tools/second-brain-nightly /etc/runit/sv/second-brain-nightly
+# The job runs as the owner of this file; runsv gives a bare environment, so HOME and PATH come from that user.
+exec 2>&1
+here=$(dirname "$(readlink -f "$0")")
+user=$(stat -c %U "$here/run")
+home=$(getent passwd "$user" | cut -d: -f6)
+[ -n "$home" ] || { echo "no home directory for user $user"; exit 1; }
+exec chpst -u "$user" env HOME="$home" PATH="$home/.npm-global/bin:$home/.local/bin:/usr/bin:/bin" sh -c '
+while :; do
+  now=$(date +%s)
+  next=$(date -d "today 03:00" +%s)
+  [ "$next" -le "$now" ] && next=$(date -d "tomorrow 03:00" +%s)
+  sleep $((next - now))
+  python3 "$1/nightly.py" --apply
+done' sh "$here"
