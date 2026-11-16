@@ -6,7 +6,8 @@ writes the pair handoff, starts a new Fable session and a new Opus session, then
 each hemisphere watches the other one; the owner chooses the permission mode of new sessions.
 
 Usage:
-  pair.py context TRANSCRIPT [--window N]          free context; exit 2 at or below 15 %, 1 without data
+  pair.py context TRANSCRIPT [--window N]          free context; exit 2 at or below 15 %, 1 without data;
+                                                   the window comes from the transcript unless --window is given
   pair.py watch PID [--interval 30] [--busy-minutes 15] [--once]
   pair.py consolidate PID [PID ...] [--model M] [--out-dir D] [--pending-file F] [--dry-run]
   pair.py start HANDOFF [--permission-mode MODE] [--session NAME=MODEL ...] [--prompt P] [--socket S]
@@ -100,6 +101,43 @@ def last_used(path, tail=TAIL):
     return None
 
 
+SMALL_WINDOW = 200_000  # 074ad0c5: 22 work-time compactions at 166 657 to 201 360 tokens (2026-11-04 to 2026-11-16)
+IDLE_GAP = 45 * 60      # an idle compaction starts 53.8 to 53.9 min after the last reply (4 compactions, 2026-11-16)
+
+
+def when_of(d):
+    try:
+        return datetime.fromisoformat(d["timestamp"].replace("Z", "+00:00")).timestamp()
+    except (KeyError, AttributeError, ValueError):
+        return None
+
+
+def session_window(path, default=WINDOW):
+    """Context window of a session from its transcript; the newest evidence decides, because /model can change it.
+
+    Claude Code records no window size: a work-time compaction at no more than 210 000 tokens means the small window,
+    a context above 210 000 tokens means the default. An idle compaction says nothing about the window.
+    ponytail: inferred; a small-window session before its first compaction keeps the default, `--window` overrides it.
+    """
+    window, last_reply = default, None
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        for d in entries(fh):
+            when = when_of(d)
+            if d.get("type") == "system" and d.get("subtype") == "compact_boundary":
+                meta = d.get("compactMetadata") or {}
+                start = when - (meta.get("durationMs") or 0) / 1000 if when is not None else None
+                work = start is not None and last_reply is not None and start - last_reply < IDLE_GAP
+                if work and (meta.get("preTokens") or 0) <= 210_000:
+                    window = SMALL_WINDOW
+                continue
+            used = context_of(d)
+            if used is not None:
+                last_reply = when if when is not None else last_reply
+                if used > 210_000:
+                    window = default
+    return window
+
+
 def classify(d):
     """Event name for one transcript entry, or None. The entry text never leaves this function."""
     if d.get("type") == "system" and d.get("subtype") == "compact_boundary":
@@ -134,12 +172,13 @@ class Watch:
     """State of one watched session; poll() returns event names, one per line of output."""
 
     def __init__(self, pid, registry=REGISTRY, projects=PROJECTS, is_alive=is_claude,
-                 threshold=THRESHOLD, window=WINDOW, busy_seconds=900):
+                 threshold=THRESHOLD, window=None, busy_seconds=900):
         s = read_session(pid, registry)
         self.pid, self.registry, self.projects, self.is_alive = pid, registry, projects, is_alive
         self.name, self.sid = s.get("name") or str(pid), s["sessionId"]
-        self.threshold, self.window, self.busy_seconds = threshold, window, busy_seconds
         self.path = transcript_of(self.sid, projects)
+        window = window or (session_window(self.path) if self.path else WINDOW)
+        self.threshold, self.window, self.busy_seconds = threshold, window, busy_seconds
         self.offset = os.path.getsize(self.path) if self.path else 0
         used = last_used(self.path) if self.path else None
         self.pending_low = used is not None and free_percent(used, window) <= threshold
@@ -414,6 +453,25 @@ def selftest():
                 json.dump({"pid": 8, "sessionId": "sid2", "status": "busy", "statusUpdatedAt": int((t - since) * 1000)}, fh)
             got = Watch(8, reg, os.path.dirname(proj), is_alive=lambda p: True).poll(t)
             assert got == want, (since, got)
+        # 2026-11-16: a session without the 1M context compacted at 167k-201k tokens (074ad0c5); the window comes from the transcript
+        tr3 = os.path.join(proj, "sid3.jsonl")
+
+        def stamped(obj, minute):
+            return dict(obj, timestamp=f"2026-11-16T10:{minute:02d}:00.000Z")
+
+        def boundary(minute, pre):
+            return stamped({"type": "system", "subtype": "compact_boundary",
+                            "compactMetadata": {"trigger": "auto", "preTokens": pre, "postTokens": 30_000, "durationMs": 60_000}}, minute)
+
+        with open(tr3, "w", encoding="utf-8") as fh:
+            fh.writelines(json.dumps(o) + "\n" for o in (stamped(reply(190_000), 0), boundary(3, 195_000), stamped(reply(170_000), 5)))
+        assert session_window(tr3) == 200_000 and free_percent(last_used(tr3), session_window(tr3)) == 15.0
+        with open(tr3, "a", encoding="utf-8") as fh:                              # a context above 210 000: the 1M model again
+            fh.write(json.dumps(stamped(reply(400_000), 9)) + "\n")
+        assert session_window(tr3) == WINDOW
+        with open(tr3, "w", encoding="utf-8") as fh:                              # 54 min after the reply: an idle compaction
+            fh.writelines(json.dumps(o) + "\n" for o in (stamped(reply(150_000), 0), boundary(55, 150_000)))
+        assert session_window(tr3) == WINDOW
 
         now = datetime(2026, 11, 16, 3, 0)
 
@@ -467,7 +525,7 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("context")
     c.add_argument("transcript")
-    c.add_argument("--window", type=int, default=WINDOW)
+    c.add_argument("--window", type=int, help="tokens; default: read from the transcript, else 1 000 000")
     w = sub.add_parser("watch")
     w.add_argument("pid", type=int)
     w.add_argument("--interval", type=float, default=30)
@@ -497,8 +555,9 @@ def main():
         if used is None:
             print("no usage in transcript")
             return 1
-        pct = free_percent(used, a.window)
-        print(f"free {pct:.1f}% used {used} window {a.window}")
+        window = a.window or session_window(a.transcript)
+        pct = free_percent(used, window)
+        print(f"free {pct:.1f}% used {used} window {window}")
         return 2 if pct <= THRESHOLD else 0
     if a.cmd == "watch":
         watch = Watch(a.pid, busy_seconds=a.busy_minutes * 60)
