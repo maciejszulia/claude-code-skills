@@ -199,6 +199,19 @@ neurophify weight for Sonnet, and the pages changed within a day for Haiku. `--a
 digest with one tool-less `claude -p` call each, commits the listed files and pushes. The runit `run` file next to
 it starts the job at 03:00 and is meant to be reviewed before installing.
 
+## Hooks
+
+Hooks that belong to no single skill live in [`hooks/`](hooks).
+
+| Hook | Event | What it does |
+|---|---|---|
+| [`link-guard.py`](hooks/link-guard.py) | `Stop` | Blocks an answer once when it says something was saved (`zapisane`, `zapisałem`) and carries no link. A link is a path with a line number or a URL. `--selftest` runs 8 cases. |
+
+```sh
+cp hooks/link-guard.py ~/.claude/hooks/
+# then add a Stop hook with the command: python3 ~/.claude/hooks/link-guard.py
+```
+
 ## Install
 
 ```sh
