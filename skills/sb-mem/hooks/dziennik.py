@@ -128,7 +128,36 @@ def main():
     append(what, sub, sid)
 
 
+def selftest():
+    """Each observed event lands as one line in a temporary dziennik; secrets and personal data are cut."""
+    import io
+    import tempfile
+    global OUT
+    os.environ.pop("SB_MEM_CHILD", None)
+    line = one_line("token glpat-ABCDEFGH1234 mail jan@example.com tel 600 700 800")
+    assert line.count("[wycięte]") == 3 and "glpat-" not in line and "@" not in line, line
+    with tempfile.TemporaryDirectory() as tmp:
+        OUT = os.path.join(tmp, "dziennik")
+        base = {"session_id": "abcdef1234", "transcript_path": "/x/t.jsonl"}
+        write = {"hook_event_name": "PostToolUse", "tool_name": "Write", "tool_input": {"file_path": "/tmp/a.md"}}
+        for event in ({"hook_event_name": "UserPromptSubmit", "prompt": "zrób raport"},
+                      {"hook_event_name": "UserPromptSubmit", "prompt": "/reload"},            # a slash command: no line
+                      write, write,                                                         # one line per file
+                      {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "git commit -m 'fix: x'"}},
+                      {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "ls -la"}},
+                      {"hook_event_name": "Stop", "last_assistant_message": "Gotowe."}):
+            sys.stdin = io.StringIO(json.dumps(base | event))
+            main()
+        sys.stdin = sys.__stdin__
+        whats = [l.split(" | ", 2)[2] for l in open(day_path(), encoding="utf-8").read().splitlines() if l.startswith("- ")]
+        assert whats == ["prompt: zrób raport", "zapis: /tmp/a.md", "commit: fix: x", "odpowiedź: Gotowe."], whats
+    return "ok"
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--selftest"]:
+        print(selftest())
+        sys.exit(0)
     try:
         main()
     except Exception:
