@@ -13,6 +13,7 @@ Usage:
   pair.py start HANDOFF [--permission-mode MODE] [--session NAME=MODEL ...] [--prompt P] [--socket S]
                 [--wait SECONDS] [--dry-run]
   pair.py restart PID [PID ...] [consolidate and start options]
+  pair.py hunch QUESTION [--data FILE|-] [--model M]  Haiku (effort max) hunch: {"answer": "tak"|"nie", "confidence": 1-99}
   pair.py --selftest
 Python standard library only: the drift-check scripts that read the same session files are Python too.
 Session registry: only ~/.claude/sessions/<pid>.json is read; the *.key files hold secrets and stay closed.
@@ -310,6 +311,25 @@ def ask_model(model, system, data, effort="max", timeout=1800):
     return r.stdout.strip()
 
 
+HUNCH_MODEL = "claude-haiku-5-5"
+HUNCH_PROMPT = ("Jesteś przeczuciem pary sesji Claude Code. Dostajesz pytanie i dane. Odpowiedz tylko obiektem JSON "
+                '{"answer": "tak" albo "nie", "confidence": liczba całkowita od 1 do 99 włącznie}. Nie pisz innego tekstu.')
+
+
+def hunch(question, data, ask=ask_model, model=HUNCH_MODEL):
+    """Owner 2026-11-15, 23:14: when the pair cannot decide, Haiku (effort max) answers „tak” or „nie” with 1-99 %."""
+    out = ask(model, HUNCH_PROMPT, f"Pytanie: {question}\n\nDane:\n{data}")
+    m = re.search(r"\{[^{}]*\}", out)
+    try:
+        h = json.loads(m.group(0)) if m else None
+    except ValueError:
+        h = None
+    if not (isinstance(h, dict) and h.get("answer") in ("tak", "nie") and type(h.get("confidence")) is int
+            and 1 <= h["confidence"] <= 99):
+        raise ValueError(f"no hunch with answer tak/nie and confidence 1-99 in: {out[:200]}")
+    return {"answer": h["answer"], "confidence": h["confidence"]}
+
+
 def write_handoff(body, jobs, model, out_dir, pending_file, now=None):
     now = now or datetime.now()
     path = os.path.join(out_dir, now.strftime("%Y-%m-%d-%H%M") + "-lead.md")
@@ -514,6 +534,21 @@ def selftest():
         cmds, _ = start_commands(path, ["probe=claude-haiku-5-5"], "odpowiedz OK", "manual", None, "p", "/home/x")
         assert cmds[0][:2] == ["tmux", "new-session"] and cmds[0][-1].endswith("'odpowiedz OK'")
         assert first_reply(tr) == "x"
+    # owner 2026-11-15, 23:14: Haiku max gives a hunch, „tak” or „nie” with 1-99 %; a stand-in replaces the model
+    seen = {}
+
+    def stand_in(model, system, data):
+        seen.update(model=model, data=data)
+        return 'Przeczucie: {"answer": "tak", "confidence": 72}'
+
+    assert hunch("Czy partia 1 idzie dziś?", "15 CV gotowych", ask=stand_in) == {"answer": "tak", "confidence": 72}
+    assert seen["model"] == HUNCH_MODEL and "Czy partia 1 idzie dziś?" in seen["data"] and "15 CV gotowych" in seen["data"]
+    for bad in ('{"answer": "może", "confidence": 50}', '{"answer": "nie", "confidence": 100}', "brak JSON"):
+        try:
+            hunch("Czy X?", "", ask=lambda model, system, data, bad=bad: bad)
+            raise AssertionError(f"bad hunch accepted: {bad}")
+        except ValueError:
+            pass
     return "ok"
 
 
@@ -531,6 +566,10 @@ def main():
     w.add_argument("--interval", type=float, default=30)
     w.add_argument("--busy-minutes", type=float, default=15)
     w.add_argument("--once", action="store_true", help="exit after the first poll with events (Bash in background)")
+    hn = sub.add_parser("hunch")
+    hn.add_argument("question")
+    hn.add_argument("--data", help="file with the data; - reads standard input")
+    hn.add_argument("--model", default=HUNCH_MODEL)
     starting = argparse.ArgumentParser(add_help=False)
     starting.add_argument("--permission-mode", choices=MODES)
     starting.add_argument("--session", action="append", help="NAME=MODEL, repeatable; default: the Fable and Opus pair")
@@ -568,6 +607,14 @@ def main():
             if "dead" in events or (a.once and events):
                 return 0
             time.sleep(a.interval)
+    if a.cmd == "hunch":
+        data = "" if not a.data else sys.stdin.read() if a.data == "-" else open(a.data, encoding="utf-8").read()
+        try:
+            print(json.dumps(hunch(a.question, data, model=a.model), ensure_ascii=False))
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            return 1
+        return 0
     if a.cmd == "consolidate":
         consolidate(a)
         return 0
