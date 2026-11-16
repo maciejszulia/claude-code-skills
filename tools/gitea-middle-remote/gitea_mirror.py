@@ -145,6 +145,8 @@ def main():
             git(r["path"], "remote", "set-url", "--add", "--push", r["remote"], r["gitea"])
         b = subprocess.run(["git", "-C", r["path"], "push", "--quiet", r["gitea"], "--all"], capture_output=True, text=True)
         t = subprocess.run(["git", "-C", r["path"], "push", "--quiet", r["gitea"], "--tags"], capture_output=True, text=True)
+        # the Gitea URL is a push URL of the remote, so git moved <remote>/* to the Gitea state; fetch puts them back
+        git(r["path"], "fetch", "--quiet", r["remote"])
         print(line + f"\tbranches exit {b.returncode}\ttags exit {t.returncode}"
               + (f"\t{(b.stderr or t.stderr).strip().splitlines()[-1][:120]}" if b.returncode or t.returncode else ""))
     return 0
