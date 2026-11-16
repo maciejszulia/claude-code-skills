@@ -14,6 +14,7 @@ second session writes the code, subagents run only on my order, and hooks keep t
 | [`drift-check`](#drift-check) | before a branch goes to the owner, and every morning | Narrates what the diff does and marks every place it departs from the stated intent; a second mode checks every open session. |
 | [`lead-handoff`](#lead-handoff) | a usage limit ends the lead session, or a session of the pair has at most 15 % of its context free | Writes a handoff page; the next lead marks the takeover, runs drift-check, then gives the computing and coding tasks to the second session. |
 | [`github-readme`](#github-readme) | a repository is created or a large commit lands | Rules and checks for a README a recruiter reads in 30 s; a hook asks for an update after a large commit. |
+| [`boldness-brains`](#boldness-brains) | at session start and when I ask where I stand | Counts the closing actions that wait for me and suggests at most 3 of them before more tooling. |
 | [`polszczyzna-kontrolowana`](#polszczyzna-kontrolowana) | Polish text that people act on | Controlled Polish: 32 numbered rules that leave each sentence one meaning. |
 
 Two more skills live in [tractatus-skills](https://github.com/maciejszulia/tractatus-skills):
@@ -165,6 +166,19 @@ asks for an update.
 Files: [`SKILL.md`](skills/github-readme/SKILL.md) and the hook in
 [`skills/github-readme/hooks/`](skills/github-readme/hooks/).
 
+## boldness-brains
+
+A chart called "The boldness-to-brains ratio" has brains on the horizontal axis and boldness on
+the vertical one. Tooling moves a point to the right; a closing action (a sent application, a
+click, a signature, a decision) moves it up. The skill counts the closing actions that wait for
+me in three sources (job-application ledgers, the order database, the newest drift-check
+report), sorts them by the minutes they need and suggests at most 3. When I order a tool while
+at least 3 closing actions wait, it adds one sentence with that number and then does the work.
+The percentages on the plane and the minutes are the agent's estimates, not measurements.
+
+File: [`SKILL.md`](skills/boldness-brains/SKILL.md). The hook `boldness-nudge.py` reports the
+counts at session start (see [Hooks](#hooks)).
+
 ## polszczyzna-kontrolowana
 
 Controlled Polish (PK) for instructions, procedures, terms, specifications and reports.
@@ -220,10 +234,13 @@ Hooks that belong to no single skill live in [`hooks/`](hooks).
 | Hook | Event | What it does |
 |---|---|---|
 | [`link-guard.py`](hooks/link-guard.py) | `Stop` | Blocks an answer once when it says something was saved (`zapisane`, `zapisałem`) and carries no link. A link is a path with a line number or a URL. `--selftest` runs 8 cases. |
+| [`boldness-nudge.py`](hooks/boldness-nudge.py) | `SessionStart` | Counts the job-application cards and the order components that wait for me and prints one context line; prints nothing when both counts are 0. Read-only. `--selftest` builds a temporary ledger. |
 
 ```sh
 cp hooks/link-guard.py ~/.claude/hooks/
 # then add a Stop hook with the command: python3 ~/.claude/hooks/link-guard.py
+cp hooks/boldness-nudge.py ~/.claude/hooks/
+# then add a SessionStart hook with the command: python3 ~/.claude/hooks/boldness-nudge.py
 ```
 
 ## Install
