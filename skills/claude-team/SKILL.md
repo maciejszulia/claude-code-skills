@@ -14,7 +14,7 @@ description: How the pair works - the lead session (Fable 5.2, effort max, right
 | 2026-11-15, 22:42 | Nocną konsolidację repo `second-brain` wykonuje model `Sonnet 5.5` (strony ważne) oraz model Haiku (pozostałe strony), oba z effort `max`. |
 | 2026-11-15, 22:43 | Każda półkula przekazuje skończone zadanie do oceny. |
 | 2026-11-15, 23:09 | Model `Sonnet 5.5` pisze handoff pary, gdy sesja pary ma co najwyżej 15 % wolnego kontekstu. |
-| 2026-11-15, 23:14 | Model Haiku z effort `max` daje przeczucie: „tak” albo „nie” z pewnością od 1 % do 99 % włącznie. |
+| 2026-11-15, 23:14 | Model Haiku z effort `max` daje przeczucie: „tak” albo „nie” z pewnością od 1 % do 99 % włącznie. Warunek: para nie potrafi rozstrzygnąć decyzji klasy A albo klasy B. Decyzja pary P15: najpierw 1 test rozstrzygający. |
 | 2026-10-11 | Lekki subagent pracuje na modelu Haiku albo Sonnet. Brief lekkiego subagenta zaczyna się od `/ponytail lite`. |
 | 2026-10-06 | Codex i OMX są wstrzymane. Kod pisze Opus. |
 | 2026-09-15 | Żaden subagent nie pracuje na modelu Fable. |
