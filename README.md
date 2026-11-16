@@ -243,6 +243,42 @@ cp hooks/boldness-nudge.py ~/.claude/hooks/
 # then add a SessionStart hook with the command: python3 ~/.claude/hooks/boldness-nudge.py
 ```
 
+### Every hook my sessions run
+
+Twelve hooks are wired in my `settings.json` (counted on 2026-11-16). Eight of them are in this repository.
+
+| Hook | Event | What it does | Source |
+|---|---|---|---|
+| `sb-recall.py` | `SessionStart`, `PreToolUse` | Gives the session the journal of earlier sessions, and the notes about a file before the file is read. | [`skills/sb-mem/hooks/`](skills/sb-mem/hooks) |
+| `dziennik.py` | `UserPromptSubmit`, `PostToolUse`, `Stop` | Writes the journal of the session into the SilverBullet space. | [`skills/sb-mem/hooks/`](skills/sb-mem/hooks) |
+| `sb-summarize.py` | `SessionEnd` | Has a small model summarise the session for the journal. | [`skills/sb-mem/hooks/`](skills/sb-mem/hooks) |
+| `lead-takeover.py` | `SessionStart` | Reminds a new session of a pending lead handoff. | [`skills/lead-handoff/hooks/`](skills/lead-handoff/hooks) |
+| `limit-guard.py` | `UserPromptSubmit`, `PostToolUse` | Asks me at 90 % of a usage limit whether the session continues or hands over. | [`skills/lead-handoff/hooks/`](skills/lead-handoff/hooks) |
+| `readme-guard.py` | `PostToolUse` | Asks for a README update after a large commit. | [`skills/github-readme/hooks/`](skills/github-readme/hooks) |
+| `link-guard.py` | `Stop` | Asks for a link when an answer says something was saved. | [`hooks/`](hooks) |
+| `boldness-nudge.py` | `SessionStart` | Counts the closing actions that wait for me. | [`hooks/`](hooks) |
+| `claude-guard.py` | `PreToolUse` | Blocks dangerous shell commands: `rm -rf` outside safe zones, a force push, `git reset --hard`, a bare `git stash`, removal of another session's worktree or branch. | not published yet |
+| `secrets-guard.sh` | `PreToolUse` | Blocks access to files with secrets unless I allow it. | not published yet |
+| `sb-provenance.py` | `SessionStart`, `PostToolUse`, `SessionEnd` | Adds a provenance footer to each SilverBullet page a session writes: date, model, session, action. | not published yet |
+| `doradca.py` | `UserPromptSubmit`, `PreToolUse` | Reminds the session to suggest a fitting way of working (a skill, a hook, a worktree) in one line. | not published yet |
+
+The four unpublished hooks name local paths; a cleaned copy of each follows. The three `sb-mem` hooks in
+this repository are newer than the installed ones: they carry `--selftest`.
+
+## MCP servers and plugins
+
+- **MCP servers I run**: `context7` (current library documentation) and `chrome-devtools` (browser
+  debugging), both over stdio.
+- **MCP server I wrote**: `pk-mcp` in [pk-rewriter](https://github.com/maciejszulia/pk-rewriter), with three
+  tools: `pk_lint`, `pk_rewrite` and `pk_rule`.
+- **Plugins I use**: `claude-mem` (memory across sessions), `ponytail` (the smallest solution that works) and
+  `skill-creator`.
+- **Plugin I wrote**: `link-pane`, a pane with the paths and URLs of the newest answer, opened with a click;
+  not published yet.
+
+More of my skills live in [book-skills](https://github.com/maciejszulia/book-skills) (six skills from C++ and
+mathematics books) and [neurophify](https://github.com/maciejszulia/neurophify) (one skill).
+
 ## Install
 
 ```sh
