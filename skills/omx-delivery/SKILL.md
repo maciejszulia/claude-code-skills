@@ -1,9 +1,11 @@
 ---
 name: omx-delivery
-description: Run a full OMX (oh-my-codex) delivery from Claude Code — choose the lane, write and commit an order file, launch a Codex leader in its own git worktree, hand it the task through tmux, keep every pane in one readable window, and receive the branch on gates you re-run yourself. Use this whenever work is being handed to OMX or Codex ("zleć to OMX-owi", "użyj omx", "niech worker to zrobi", "delegate this to a worker", "let Codex build it"), whenever you are about to type `omx`, `omx team`, `omx ralph` or `omx ultragoal`, whenever a running leader looks stuck or its panes are scattered across tmux windows, and whenever a worker's finished branch needs receiving or reviewing. Reach for it even when the user only says "dowieź mi X" and delegation is the obvious way to get there.
+description: PAUSED since 2026-10-06 by owner rule (Codex and OMX are on hold) - do not use until the owner lifts the pause. Run a full OMX (oh-my-codex) delivery from Claude Code — choose the lane, write and commit an order file, launch a Codex leader in its own git worktree, hand it the task through tmux, keep every pane in one readable window, and receive the branch on gates you re-run yourself. Use this whenever work is being handed to OMX or Codex ("zleć to OMX-owi", "użyj omx", "niech worker to zrobi", "delegate this to a worker", "let Codex build it"), whenever you are about to type `omx`, `omx team`, `omx ralph` or `omx ultragoal`, whenever a running leader looks stuck or its panes are scattered across tmux windows, and whenever a worker's finished branch needs receiving or reviewing. Reach for it even when the user only says "dowieź mi X" and delegation is the obvious way to get there.
 ---
 
 # OMX delivery
+
+> Skill wstrzymany od 2026-10-06: reguła ownera zawiesza pracę z Codeksem i z OMX do odwołania. Agentowi NIE WOLNO uruchomić tego skillu bez polecenia ownera.
 
 You are the lead: you decide what gets built, write the order, watch the run, and accept or
 refuse the result. The worker writes the product code.

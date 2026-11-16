@@ -13,7 +13,7 @@ Source: tip from an Anthropic engineer (Claude Code newsletter, 2026-09-19). The
 4. **Bold the drift inline.** Wrap in `**…**` every sentence where the change does something the intent did not ask for, skips something it asked for, or does it differently (other scope, other default, other data touched). Do not bold matches.
 5. **Close with a list** "Dryf" of the bolded items, one line each, with file:line, and for each one the question the owner has to answer (keep / revert / change). If nothing drifted, write "Dryfu nie znalazłem" and what you compared against.
 
-Rules: read-only, no fixes in this pass. Report only what you checked in the diff; mark anything inferred as unverified. The owner will paste your answer back as a quote and reply to the parts that stand out, so keep every step addressable (numbered).
+Rules: read-only, no fixes in this pass. Report only what you checked in the diff; mark anything inferred as unverified. The owner will paste your answer back as a quote and reply to the parts that stand out, so keep every step addressable (numbered). In a pair the other hemisphere reviews the report before the owner sees it (step 7 of the open-sessions mode).
 
 ## Tryb: otwarte sesje
 
@@ -27,5 +27,6 @@ Wykonaj każdy krok w tej kolejności:
 4. Dla każdej sesji opisz polecenie ownera, numerowane kroki stanu i pogrubiony dryf. Sesję bez dryfu oznacz zdaniem „Dryfu nie znalazłem”.
 5. Zamknij raport listą pytań do ownera. Każde pytanie ma 3 elementy: klasę decyzji, rekomendację i termin. Klasa decyzji to A, B albo C.
 6. Zapisz raport w SB: `briefings/RRRR-MM-DD-drift-check-open-sessions.md`.
+7. Wyślij raport do oceny, zanim pokażesz raport ownerowi: raport lidera ocenia lewa półkula, a raport lewej półkuli ocenia lider. Jeżeli druga półkula nie działa, to raport podaje zdanie „bez oceny drugiej półkuli” oraz powód.
 
 NIE WOLNO czytać plików `*.key` z rejestru `~/.claude/sessions/`: pliki zawierają sekrety. Sesja w chmurze i sesja Remote Control offline leżą poza trybem, bo ta maszyna nie ma transkryptów tych sesji.

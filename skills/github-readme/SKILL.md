@@ -25,7 +25,9 @@ Wykonaj każdy krok w tej kolejności:
    - Uruchom każdą komendę z szybkiego startu w czystym klonie. Komendę, którą pominąłeś, oznacz w raporcie jako niesprawdzoną.
    - Otwórz każdy link.
    - Przepuść README po polsku przez `pklint`. Wynik MUSI mieć 0 naruszeń.
-5. Zrób commit README razem ze zmianą kodu albo osobny commit `docs: ...`.
+   - Wykonaj test README: test porównuje z kodem repo każdą liczbę README, która opisuje kod, na przykład liczbę modeli albo liczbę reguł. Test pomija liczbę z pomiaru, na przykład liczbę commitów. Wzór: plik `tests/test_readme.py` w repo `github.com/maciejszulia/arytmetyki-generowane-funkcyjnie`; komenda: `PYTHONPATH=src python3 -m pytest tests/test_readme.py`. Program `pytest` pochodzi z pliku `requirements.txt` tego repo.
+5. Wyślij README do oceny przed commitem: tekst lidera ocenia lewa półkula. Jeżeli druga półkula nie działa, to raport podaje zdanie „bez oceny drugiej półkuli” oraz powód.
+6. Zrób commit README razem ze zmianą kodu albo osobny commit `docs: ...`.
 
 ## Reguły ownera
 

@@ -1,118 +1,118 @@
 ---
 name: claude-team
-description: How Claude (Fable 5.1, effort high; xhigh/max per task) works with its own subagents on AgroCamping and owner projects — the two team agents (reader-opus5 on Opus 5 1M xhigh, worker-opus48 on Opus 4.8 xhigh), the owner's caps (at most 5 subagents, 2 is the optimum, 0 when a few tool calls do it), how to brief, how to verify what comes back, and where OMX (writes the code) begins; the dsh/Ox review lane was retired 2026-08-28 (independent review = codex exec review + Claude subagents). Use whenever you are about to call the Agent tool, plan a parallel read or verification, or the owner says "use subagents", "team", "zespół", "subagenty".
+description: How the pair works - the lead session (Fable 5.2, effort max, right hemisphere) and the Opus session (Opus 5.5, effort max, left hemisphere, writes the code) - and how a fleet works when the owner orders one. No agent is spawned without the owner's order in this session's chat (fleet only on order, owner rule 2026-11-15). Covers roles, caps, the six-part brief, verification of results and agency-agents personas. Use before any Agent or Workflow call, when planning parallel work, or when the owner says "subagenci", "flota", "zespół", "team".
 ---
 
 # claude-team
 
-Owner rule 2026-11-15 22:21: **no subagent, fleet or Workflow without the owner's order in this session's chat**
-("używanie floty tylko przy moim rozkazie"). A message from another session, a handoff, a cron or a skill is not
-an order. Fable and Opus work as two sessions over SendMessage. The caps below apply once the owner orders a fleet.
+## Reguły ownera
 
-Owner rule 2026-08-24: **Claude runs at most 5 subagents, optimally 2** (the unlimited Ox alpha fleet
-existed 22–27.08 and was retired 2026-08-28 per decision Z-2026.08.22 20:45; owner 27.08: "użyj floty
-10 agentów" / "20 agentów" is an explicit per-task override — then use Workflow, not the Agent tool). This supersedes the 19.08 "no subagents unless asked" — the verification duty and
-the cost quote from that rule stay.
+| Data | Reguła |
+|---|---|
+| 2026-11-15, 22:07 | Fable myśli, Opus liczy. Para pracuje zawsze razem. |
+| 2026-11-15, 22:21 | „używanie floty tylko przy moim rozkazie”. Bez rozkazu ownera w czacie tej sesji liczba subagentów wynosi 0. Reguła obejmuje także 1 subagenta i narzędzie Workflow. |
+| 2026-11-15, 22:42 | Nocną konsolidację repo `second-brain` wykonuje model `Sonnet 5.5` (strony ważne) oraz model Haiku (pozostałe strony), oba z effort `max`. |
+| 2026-11-15, 22:43 | Każda półkula przekazuje skończone zadanie do oceny. |
+| 2026-11-15, 23:09 | Model `Sonnet 5.5` pisze handoff pary, gdy sesja pary ma co najwyżej 15 % wolnego kontekstu. |
+| 2026-11-15, 23:14 | Model Haiku z effort `max` daje przeczucie: „tak” albo „nie” z pewnością od 1 % do 99 % włącznie. Warunek: para nie potrafi rozstrzygnąć decyzji klasy A albo klasy B. Decyzja pary P15: najpierw 1 test rozstrzygający. |
+| 2026-10-11 | Lekki subagent pracuje na modelu Haiku albo Sonnet. Brief lekkiego subagenta zaczyna się od `/ponytail lite`. |
+| 2026-10-06 | Codex i OMX są wstrzymane. Kod pisze Opus. |
+| 2026-09-15 | Żaden subagent nie pracuje na modelu Fable. |
+| 2026-08-29 | Każda rola floty dostaje personę z katalogu `~/agency-agents/`. |
+| 2026-08-24 | Narzędzie Agent uruchamia co najwyżej 5 subagentów; optimum to 2. Więcej niż 5 agentów: tylko gdy rozkaz ownera podaje liczbę większą niż 5; agentów uruchamia wtedy narzędzie Workflow. |
 
-## Roles
+Rozkazy ownera z 22:42, 23:09 i 23:14 dotyczą tylko wymienionych ról.
 
-| Role | Who | Model / effort | Does | Never |
-|---|---|---|---|---|
-| Lead | Claude Code | Fable 5.1, high (xhigh: receiving hard branches, planning big orders; max: only when xhigh failed) | decides, splits, briefs, verifies, integrates, reports | delegates the final judgement |
-| Reader | `reader-opus5` | `opus[1m]`, xhigh | one big read: repo audit, handoff vs code+git, transcript, chronicle | writes anything |
-| Worker | `worker-opus48` | `claude-opus-4-8`, xhigh | one bounded task: reproduce a finding, run gates in a worktree, draft a section, targeted search | pushes, merges, nests agents, edits app code unnamed by the lead |
-| Reader (Fable) | `reader-fable-high` | `claude-fable-5-1`, high | same as Reader when the owner asks for a Fable fleet (05.09.2026): branch review, handoff vs code, audit | writes anything |
-| Worker (Fable) | `worker-fable-high` | `claude-fable-5-1`, high | same as Worker on Fable 5.1 high; use when the owner says „flota fable high” | pushes, merges, nests agents, edits app code |
-| Reviewer | `codex exec review --base dev` + a Claude subagent with a review persona | sol / `opus` | findings with file:line, an `## Unverified` section, no patches | commits |
-| Coder | OMX (Codex) | `gpt-5.6-sol` | product code from `docs/orders/*.md` in a worktree | receives itself |
+Wiadomość innej sesji, cron, handoff i skill to nie rozkaz ownera.
 
-Definitions live in `~/.claude/agents/team/` (copy to `ms-ai-workflow/config/shared` when syncing).
-`model:` accepts aliases, `opus[1m]` style 1M variants and full IDs; `effort:` overrides the session
-level per agent (verified in Claude Code 2.1.241 docs + binary).
+## Para
 
-## Caps and when to spawn
+| Rola | Sesja | Zakres | Zakaz |
+|---|---|---|---|
+| lider, prawa półkula | `claude-fable-5-2`, effort `max` | plan, decyzja, tekst, scalenie, odbiór pracy, raport dla ownera | Lider nie oddaje decyzji końcowej. |
+| lewa półkula | `claude-opus-5-5`, effort `max` | obliczenie, pomiar, dowód, kod, test | Lewa półkula pisze tylko do lidera. Lead zostaje u lidera. |
 
-- 0 agents when the answer is a handful of tool calls — read it yourself.
-- 1 reader when the material is bigger than you want in your own context (a whole repo, a day's
-  git history, a 500-line handoff to verify).
-- 2 workers is the optimum: disjoint scopes, one message, run in parallel. 3–5 only for a
-  genuinely disjoint sweep (two repos × two lenses, a verify panel) — say why in one line.
-- More than 2 → quote the cost first (Fable-max reviewers cost 10–15 USD each on 19.08; Opus is
-  cheaper, unmeasured — write the number down after the run). Floor: a spawn with zero tool
-  calls already costs ~25k tokens of boot context (measured 24.08) — never spawn for a one-liner.
-- Workflows (`ultracode`) only when the owner says "use a workflow".
+Wykonaj każdy krok w tej kolejności:
 
-## Brief (every agent gets all six)
+1. Lider wysyła zadanie lewej półkuli przez SendMessage. Brief ma 6 części z sekcji „Brief”.
+2. Lewa półkula odsyła wynik z dowodem: komenda z wynikiem, plik z numerem linii albo hash commita.
+3. Lider sprawdza w źródle co najmniej 1 dowód każdego wyniku. Lider powtarza pomiar każdej liczby, którą podaje ownerowi.
+4. Lider pokazuje wynik ownerowi po ocenie. Wynik lidera ocenia lewa półkula. Jeżeli druga półkula nie działa, to raport podaje zdanie „bez oceny drugiej półkuli” oraz powód.
 
-1. Scope: the one question or task, in one sentence. 2. Paths: repo, worktree, files — a detached
-worktree for reads of a repo with secrets or a live DB. 3. Exact commands, in order. 4. Output
-shape: ranked list / table / counts; "Unverified" section mandatory. 5. Forbidden: push, merge,
-deploy, `git add -A`, live checkouts, secrets in output. 6. Scratchpad path.
-Agents return raw data — the owner-facing text is yours.
+Model decyzyjny pary „dowód do progu” opisuje strona SB `decisions/pair-decisions.md`. Klasę A rozstrzyga 1 półkula. Klasę B rozstrzygają 2 zgodne głosy. Klasę C rozstrzyga owner. Dowód wygrywa z opinią modelu. Spór trwa co najwyżej 1 rundę.
 
-## Verify before you use it
+## Flota na rozkaz ownera
 
-- Spot-check at least one `file:line` per finding you carry into a report or an order; open it.
-- Re-run any count you quote (tests, commits, lines) — an agent's "208/208" is a claim.
-- A finding becomes an OMX order only after you reproduced it or Ox confirmed it independently.
-- Sign the report: which agent found what, with its model (owner rule: model disclosure).
+Wykonaj każdy krok w tej kolejności:
 
-## Boundaries with OMX
+1. Pokaż ownerowi przed startem tabelę floty: rola, persona, typ agenta, model i effort, liczba. Pod tabelą podaj koszt w tokenach i ETA.
+2. Dobierz liczbę agentów:
+   - 0 agentów, gdy odpowiedź wymaga co najwyżej 5 wywołań narzędzi;
+   - 1 czytelnik, gdy materiał przekracza kontekst lidera;
+   - 2 workerów o rozłącznych zakresach: optimum;
+   - od 3 do 5 agentów włącznie tylko dla rozłącznego przeglądu, z 1 zdaniem uzasadnienia;
+   - więcej niż 5 agentów: tylko gdy rozkaz ownera podaje liczbę większą niż 5; lider używa wtedy narzędzia Workflow.
+3. Wybierz typ agenta: `worker-opus5` (kod, effort `max`) albo `reader-opus5` (czytanie, effort `xhigh`). Podaj model jawnie: `opus`, `sonnet` albo `haiku`.
+4. Po starcie sprawdź modele komendą `grep -h '"model"' <katalog transkryptu>/agent-*.meta.json`. Podaj modele w raporcie.
 
-OMX writes (`omx-delivery` skill); Claude's agents read, verify, gate and draft; independent review is
-`codex exec review --base dev` plus, when the owner asks for a fleet, a Workflow of read-only Opus agents
-(28.08: 10 × Opus 5 max ≈ 2.0 M tokens / 40 min; 20 × Opus 4.8 high ≈ 2.9 M tokens / 32 min). A Claude agent never patches
-product code to "save a round trip" — that is an order for OMX.
+Koszt: start 1 agenta bez wywołań narzędzi kosztuje 25 000 tokenów `[pomiar: 2026-08-24]`. Flota 10 agentów na modelu Opus z effort `max` zużyła 2,0 mln tokenów w 40 min `[pomiar: 2026-08-28]`.
 
-## Fleets and agency-agents personas (owner 2026-08-29)
+### Persony
 
-Owner 29.08 07:2x: "użyj agency agents do zbudowania tego. rozkaz." and 27.08 "Używaj agency Agents.
-Pracuj we flocie." — when the owner orders a fleet ("dobierz sobie dużą flotę", "flota", "użyj N agentów"),
-build it with the Workflow tool and give **every role a persona from `~/agency-agents/`**:
+Źródło person: `~/agency-agents/<dział>/`. Katalog `~/.claude/agents/` rejestruje część person jako typy agentów: 23 pliki `[pomiar: ls, 2026-11-16]`. Persona z rejestru wchodzi przez typ agenta z jawnym modelem. Każda inna persona wchodzi do briefu przez prefiks.
 
-| Role | Persona file (source of truth: `~/agency-agents/<division>/`) | How to attach |
+| Rola | Plik persony | Sposób |
 |---|---|---|
-| planner | `engineering/engineering-multi-agent-systems-architect.md` | prompt prefix, model inherited (Fable 5.1, effort max) |
-| coder: UI/server | `engineering/engineering-frontend-developer.md` | `agentType: 'worker-opus48'` + prefix |
-| coder: prompts/audit | `engineering/engineering-prompt-engineer.md` | idem |
-| coder: data/parsers | `engineering/engineering-data-engineer.md` | idem |
-| coder: diagrams/inventory | `engineering/engineering-data-visualization-engineer.md` | idem |
-| coder: service/runit | `DevOps Automator` (registered in `~/.claude/agents/`) | `agentType: 'DevOps Automator', model: 'claude-opus-4-8'` |
-| integrator | `engineering/engineering-git-workflow-master.md` | worker-opus48 + prefix |
-| QA data / privacy / UX / service / inventory | `testing/testing-evidence-collector.md`, `engineering/engineering-privacy-engineer.md`, `testing/testing-accessibility-auditor.md`, `testing/testing-test-automation-engineer.md`, `engineering/engineering-developer-tooling-engineer.md` | `model: 'opus', effort: 'medium'` + prefix |
-| judge / acceptance | `Reality Checker` (registered) | `agentType: 'Reality Checker', model: 'opus'` |
-| fixer | `engineering/engineering-minimal-change-engineer.md` | worker-opus48 + prefix |
-| reviewer | `Code Reviewer` (registered) + ponytail lens in the prompt | `agentType: 'Code Reviewer', model: 'opus'` |
+| plan | `engineering/engineering-multi-agent-systems-architect.md` | plan pisze lider |
+| kod: UI, serwer | `engineering/engineering-frontend-developer.md` | typ `Frontend Developer`, `model: 'opus'` |
+| kod: prompty, audyt | `engineering/engineering-prompt-engineer.md` | typ `Prompt Engineer`, `model: 'opus'` |
+| kod: dane, parsery | `engineering/engineering-data-engineer.md` | typ `Data Engineer`, `model: 'opus'` |
+| kod: diagramy | `engineering/engineering-data-visualization-engineer.md` | typ `Data Visualization Engineer`, `model: 'opus'` |
+| kod: usługi runit | typ `DevOps Automator` | `model: 'opus'` |
+| scalenie | `engineering/engineering-git-workflow-master.md` | `worker-opus5` i prefiks |
+| QA | `testing/testing-evidence-collector.md`, `engineering/engineering-privacy-engineer.md`, `testing/testing-accessibility-auditor.md`, `testing/testing-test-automation-engineer.md` | typy `Evidence Collector`, `Privacy Engineer`, `Accessibility Auditor`, `Test Automation Engineer`; `model: 'opus'` |
+| werdykt | typ `Reality Checker` | `model: 'opus'` |
+| poprawki | `engineering/engineering-minimal-change-engineer.md` | typ `Minimal Change Engineer`, `model: 'opus'` |
+| przegląd kodu | typ `Code Reviewer` | `model: 'opus'` |
 
-Prefix (verbatim): `PERSONA (owner order): FIRST read <file> and adopt that persona for this whole task — its
-identity, standards, checklists and output habits — then execute the order below. State the persona name in
-the first line of your report.` Registered persona types are the `name:` field of the file (`Reality Checker`),
-not the slug; a freshly copied file is not in the registry until Claude Code restarts — use the prefix path.
-`~/.claude/agents/` holds 16 files (3.5 kB of descriptions, limit ~15k tokens) — copy more only for a real role.
+Prefiks (dosłownie): `PERSONA (owner order): FIRST read <file> and adopt that persona for this whole task — its identity, standards, checklists and output habits — then execute the order below. State the persona name in the first line of your report.`
 
-Fleet shape that worked (Panel AI, 29.08): plan (1) → coders in their own worktrees on disjoint files (5) →
-integrator (1) → QA refuters in parallel with the verdict judge (5+1) → one fixer for all FAILs + re-run of
-failed lenses → reviewer. Each coder gets the module contract in the prompt, its own port for tests, and the
-rule "kill only the PID you started". Verify models after launch (owner rule 29.08):
-`grep -h '"model"' <transcriptDir>/agent-*.meta.json`.
+Kształt floty, który zadziałał 2026-08-29, ma 6 etapów w tej kolejności:
 
-Journal: hook `~/.claude/hooks/dziennik.py` (PostToolUse on Agent|Workflow|Skill|Artifact|Bash) writes one line
-per delegation/action to `~/.local/share/silverbullet/space/dziennik/YYYY-MM-DD.md` (owner 29.08: "rób sobie
-ciągle notatki co robisz, co sobie zleciłeś — niech to będzie twój hook"). Do not duplicate it by hand.
+1. plan;
+2. coderzy w osobnych worktree na rozłącznych plikach;
+3. scalenie;
+4. QA równolegle z werdyktem;
+5. 1 agent poprawek;
+6. przegląd kodu.
 
-## Ralph loop, light frameworks, environment (owner 2026-08-29 07:3x)
+Pętla coder i QA: agent poprawek i QA pracują na zmianę, dopóki QA zgłasza błąd, przez co najwyżej 3 rundy. Lider zapisuje po każdej rundzie liczbę otwartych błędów.
 
-Owner: "pisz efficient kod /ponytail lite i używaj ralph-skilli. ustawiaj środowisko. updatuj skilla."
+## Brief
 
-- **Ralph loop in a Workflow** (OMX `$ralph` persistence, ported): coder ↔ QA refuter in a loop until PASS, max 3 rounds,
-  `log()` per round with the open findings count; never a single fix round when the owner asked for ralph.
-    let round = 0, fails = await qa(); while (fails.length && round++ < 3) { await fixer(fails); fails = await qa(fails) }
-- **Light frameworks only** for owner panels on localhost: htmx (cdnjs, one `<script>`) for partial refresh and Y/N buttons,
-  stdlib `http.server` on the backend, no React/bundlers. Fonts: JetBrains Mono. Style tokens: black/white/red, hard edges.
-- **Environment first**: every coder and QA agent gets a one-command environment (`dev-env.sh <key>`: own worktree, own
-  `XDG_STATE_HOME`, own port, fixtures, the test commands printed) — agents must not improvise paths or ports.
-- **Ponytail lite** for panel code (owner 07:3x); keep the one runnable self-check per module.
-- **Owner feedback as data**: when a page shows AI opinions/proposals, store the owner's Y/N in the panel DB — that table is the
-  evolution dataset (what to change in memory, skills, CLAUDE.md), not chat history.
-- **Restart services by PID file only** — `pkill -f`/`pgrep -f` in the same Bash call as the start line kills the tool shell
-  (exit 144; 29.08, twice).
+Każdy brief ma 6 części:
+
+1. Zakres: 1 pytanie albo 1 zadanie w 1 zdaniu.
+2. Ścieżki: repo, worktree, pliki. Odczyt repo z sekretami albo z żywą bazą idzie przez osobny worktree.
+3. Komendy: dokładne, w kolejności.
+4. Kształt wyniku: lista rankingowa, tabela albo liczby; sekcja „Niesprawdzone” jest obowiązkowa.
+5. Zakazy: push, merge, deploy, `git add -A`, praca w żywym checkoucie, sekret w wyniku.
+6. Ścieżka scratchpadu.
+
+Agent zwraca dane. Tekst dla ownera pisze lider.
+
+## Weryfikacja wyniku
+
+- Lider otwiera co najmniej 1 miejsce `plik:linia` dla każdego ustalenia, które trafia do raportu.
+- Lider powtarza każdą liczbę z wyniku: testy, commity, linie.
+- Raport podaje wykonawcę każdego ustalenia razem z modelem.
+
+## Praktyki
+
+- Agent restartuje usługę tylko według pliku PID. Komenda `pkill -f` w tym samym wywołaniu Bash co start usługi zabija powłokę narzędzia.
+- Każdy agent floty dostaje środowisko w 1 komendzie: własny worktree, własny `XDG_STATE_HOME`, własny port, dane testowe i wypisane komendy testów.
+- Panel ownera na localhost: htmx, `http.server` z biblioteki standardowej, bez Reacta i bez bundlera; czcionka JetBrains Mono; kolory czarny, biały i czerwony (owner 2026-08-29).
+- Kod panelu ownera powstaje z `/ponytail lite`. Każdy moduł ma 1 uruchamialny self-check.
+- Po biegu floty lider zapisuje w raporcie zmierzony koszt w tokenach.
+- Odpowiedź ownera „tak” albo „nie” na propozycję w panelu trafia do bazy panelu.
+- Hook `~/.claude/hooks/dziennik.py` zapisuje każdą delegację w SB `dziennik/RRRR-MM-DD.md`. Agent nie powtarza tego zapisu ręcznie.
