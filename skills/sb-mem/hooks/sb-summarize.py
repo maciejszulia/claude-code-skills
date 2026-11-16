@@ -93,7 +93,38 @@ def main():
                      stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
+def selftest():
+    """A stand-in claude binary summarizes a temporary session: 1 podsumowanie line and a temat in sessions.md."""
+    import tempfile
+    global SPACE, CLAUDE
+    os.environ.pop("SB_MEM_CHILD", None)
+    with tempfile.TemporaryDirectory() as tmp:
+        SPACE = dziennik.SPACE = tmp
+        dziennik.OUT = os.path.join(tmp, "dziennik")
+        stub = os.path.join(tmp, "claude-stub")
+        with open(stub, "w", encoding="utf-8") as f:
+            f.write("#!/bin/sh\necho '{\"result\": \"Zlecono raport, zrobiono raport, otwarte: nic.\", \"modelUsage\": {}}'\n")
+        os.chmod(stub, 0o755)
+        CLAUDE = os.environ["SB_MEM_CLAUDE"] = stub                     # the stand-in keeps the real cost log clean
+        sid = "abcdef12-0000"
+        for what in ("prompt: napisz raport", "zapis: /x/a.md"):
+            dziennik.append(what, "lead", sid[:8])
+        assert build_prompt(sid[:8]) == ""                                 # fewer than 3 lines: no model call
+        dziennik.append("odpowiedź: gotowe", "lead", sid[:8])
+        with open(os.path.join(tmp, "sessions.md"), "w", encoding="utf-8") as f:
+            f.write(f"| START | session {sid} |\n| END | session {sid} |")
+        run(sid)
+        text = open(dziennik.day_path(), encoding="utf-8").read()
+        assert "| lead abcdef12 | podsumowanie: Zlecono raport, zrobiono raport, otwarte: nic." in text, text
+        assert "| temat: Zlecono raport" in open(os.path.join(tmp, "sessions.md"), encoding="utf-8").read()
+        assert session_lines(sid[:8]) == []                                # nothing new after the summary
+    return "ok"
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--selftest"]:
+        print(selftest())
+        sys.exit(0)
     try:
         main()
     except Exception:
