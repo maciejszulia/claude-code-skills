@@ -29,7 +29,9 @@ ASK = ("LIMIT-GUARD: limit {name} wynosi {pct} % (próg {thr} %, reset {reset}).
        "narzędziem AskUserQuestion, co dalej. Opcje: 1) kontynuuj tutaj aż do limitu; 2) wstrzymaj pracę do resetu o {reset}; "
        "3) przekaż pracę Hermesowi (darmowe modele) z handoffem w SB; 4) zaplanuj rutynę w chmurze na czas po resecie; "
        "5) przekaż lead Fable 5.2 (effort max): skill lead-handoff, tryb WYDAJ. "
-       "Nie proponuj Codeksa ani OMX (reguła ownera z 2026-10-06). Po resecie hook każe uruchomić drift-check.")
+       "Nie proponuj Codeksa ani OMX (reguła ownera z 2026-10-06). Po resecie hook każe uruchomić drift-check. "
+       "Lider wysyła wynik do oceny drugiej półkuli przed pokazaniem ownerowi. Jeżeli druga półkula nie działa, to raport "
+       "podaje zdanie „bez oceny drugiej półkuli” oraz powód.")
 DRIFT = ("LIMIT-GUARD: limit {name} odnowił się o {reset}. Zanim podejmiesz dalszą pracę, uruchom skill drift-check "
          "(/drift-check) dla bieżącej pracy, pokaż wynik ownerowi i dopiero potem kontynuuj.")
 
@@ -95,6 +97,7 @@ def selftest():
     lim = {"five_hour": {"used_percentage": 95, "resets_at": t0 + 600}, "seven_day": {"used_percentage": 60, "resets_at": t0 + 9999}}
     msgs, st = decide(lim, {}, t0)
     assert len(msgs) == 1 and "5 h" in msgs[0] and "AskUserQuestion" in msgs[0], msgs
+    assert "druga półkula" in msgs[0] and "bez oceny drugiej półkuli" in msgs[0], msgs  # owner 2026-11-15, 22:43
     msgs, st = decide(lim, st, t0 + 60)
     assert msgs == [], msgs                                   # asked once per window
     after = {"five_hour": {"used_percentage": 3, "resets_at": t0 + 600 + 18000}, "seven_day": lim["seven_day"]}
