@@ -20,6 +20,8 @@ import time
 
 LIMITS = os.environ.get("LIMIT_GUARD_LIMITS", os.path.expanduser("~/.claude/rate_limits.json"))
 STATE = os.environ.get("LIMIT_GUARD_STATE", os.path.expanduser("~/.claude/state/limit-guard.json"))
+ROTATION = os.environ.get("LIMIT_GUARD_ROTATION",
+                          os.path.expanduser("~/.local/share/silverbullet/space/projects/brain-systems.md"))
 THRESHOLD = 90
 NAMES = {"five_hour": "5 h", "seven_day": "7 d"}
 
@@ -36,8 +38,9 @@ def hhmm(epoch):
     return time.strftime("%H:%M", time.localtime(epoch)) if epoch else "?"
 
 
-def decide(limits, state, now):
-    """Returns (messages, new_state). state: {"asked": {window: resets_at}, "drift": {window: resets_at}}."""
+def decide(limits, state, now, todo=lambda: ""):
+    """Returns (messages, new_state). state: {"asked": {window: resets_at}, "drift": {window: resets_at}}.
+    todo() gives the rotation line added to the drift-check message; it runs only when that message is due."""
     asked, drift = dict(state.get("asked", {})), dict(state.get("drift", {}))
     out = []
     for key, name in NAMES.items():
@@ -45,7 +48,8 @@ def decide(limits, state, now):
         pct, reset = w.get("used_percentage"), w.get("resets_at")
         pending = drift.get(key)
         if pending and (now >= pending or (reset and reset != pending)):
-            out.append(DRIFT.format(name=name, reset=hhmm(pending)))
+            line = todo()
+            out.append(DRIFT.format(name=name, reset=hhmm(pending)) + (" " + line if line else ""))
             drift.pop(key)
             asked.pop(key, None)
         if pct is not None and reset and pct >= THRESHOLD and asked.get(key) != reset:
@@ -53,6 +57,22 @@ def decide(limits, state, now):
             asked[key] = reset
             drift[key] = reset
     return out, {"asked": asked, "drift": drift}
+
+
+def rotation_todo(path=ROTATION):
+    """First row with the state "todo" in the table under "## Rotacja co okno limitu", as 1 line; "" when the page,
+    the section or such a row is missing. Columns: order, system, task, completion criterion, state, result."""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            text = fh.read()
+    except OSError:
+        return ""
+    parts = text.split("## Rotacja co okno limitu", 1)
+    for row in (parts[1].split("\n## ", 1)[0].splitlines() if len(parts) == 2 else []):
+        cells = [c.strip() for c in row.strip().strip("|").split("|")]
+        if row.lstrip().startswith("|") and len(cells) >= 5 and cells[4] == "todo":
+            return f"Rotacja: pozycja {cells[0]}, system {cells[1]}. Zadanie okna: {cells[2]} Kryterium: {cells[3]}"
+    return ""
 
 
 def newly_asked(old, new):
@@ -82,6 +102,22 @@ def selftest():
     assert len(msgs) == 1 and "drift-check" in msgs[0], msgs  # drift-check right after the reset
     msgs, st = decide(after, st, t0 + 800)
     assert msgs == [] and st == {"asked": {}, "drift": {}}, (msgs, st)
+    _, s2 = decide(lim, {}, t0)
+    msgs, _ = decide(after, s2, t0 + 700, todo=lambda: "Rotacja: pozycja 3.")
+    assert len(msgs) == 1 and msgs[0].endswith(" Rotacja: pozycja 3."), msgs    # the window's rotation task follows
+    with tempfile.TemporaryDirectory() as tmp:
+        page = os.path.join(tmp, "brain-systems.md")
+        assert rotation_todo(page) == ""                                            # no page: no line
+        with open(page, "w", encoding="utf-8") as fh:
+            fh.write("## Mapa\n\n| 1 | x | y | z | todo | w |\n\n## Rotacja co okno limitu\n\n"
+                     "| Kolejność | System | Zadanie okna | Kryterium ukończenia | Stan | Wynik |\n|---|---|---|---|---|---|\n"
+                     "| 1 | sen (6) | A. | B. | done | C. |\n| 3 | ciało migdałowate (11) | Skan. | Raport. | todo | brak. |\n"
+                     "\n## Niesprawdzone\n\n| 9 | a | b | c | todo | d |\n")
+        assert rotation_todo(page) == ("Rotacja: pozycja 3, system ciało migdałowate (11). Zadanie okna: Skan. "
+                                       "Kryterium: Raport."), rotation_todo(page)
+        with open(page, "w", encoding="utf-8") as fh:
+            fh.write("## Rotacja co okno limitu\n\n| 1 | sen (6) | A. | B. | done | C. |\n")
+        assert rotation_todo(page) == ""                                            # no todo row: no line
     assert newly_asked({}, {"asked": {"five_hour": 5}}) == ["five_hour"]
     assert newly_asked({"asked": {"five_hour": 5}}, {"asked": {"five_hour": 5}}) == []    # no repeat alarm
     with tempfile.TemporaryDirectory() as tmp:                                           # fake ntfy-push, no real push
@@ -114,7 +150,7 @@ def main():
                 state = json.load(fh)
         except (OSError, ValueError):
             state = {}
-        msgs, new_state = decide(limits, state, time.time())
+        msgs, new_state = decide(limits, state, time.time(), rotation_todo)
         if new_state != state:
             os.makedirs(os.path.dirname(STATE), exist_ok=True)
             with open(STATE, "w", encoding="utf-8") as fh:
