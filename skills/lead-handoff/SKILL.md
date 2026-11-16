@@ -57,20 +57,20 @@ Wykonaj każdy krok w tej kolejności:
 ### Kontekst pary
 
 - Próg obowiązuje sesję pary z oknem 1 000 000 tokenów. Komenda `pair.py context <transkrypt>` podaje wolny kontekst sesji.
-- Gdy sesja pary ma co najwyżej 15 % wolnego kontekstu, handoff pary pisze model `Sonnet 5.5` (effort `max`) komendą `pair.py consolidate`.
-- Potem model `Sonnet 5.5` uruchamia nową sesję lidera i nową sesję lewej półkuli komendą `pair.py restart` i kończy pracę.
-- Te 2 kroki to rozkaz ownera na model `Sonnet 5.5` w tej roli. Składnię komend podaje `pair.py --help`.
+- Gdy sesja pary ma co najwyżej 15 % wolnego kontekstu, uruchom komendę `pair.py restart <PID lidera> <PID lewej półkuli> --permission-mode <tryb>`. Tryb uprawnień wybiera owner.
+- Komenda `restart` wykonuje 2 kroki: model `Sonnet 5.5` pisze handoff pary, potem komenda uruchamia nową sesję lidera i nową sesję lewej półkuli.
+- Ta rola to rozkaz ownera na model `Sonnet 5.5`. Składnię komend podaje `pair.py --help`.
 - Claude Code kompaktuje sesję po 54 min bezczynności (ustawienie `idleCompaction`). Taka kompakcja nie oznacza progu 15 %.
 
 ## Tryb PRZEJMIJ
 
 Wykonaj każdy krok w tej kolejności:
 
-1. Sprawdź effort i tryb sesji. Jeżeli effort jest inny niż `max`, to poproś ownera o komendę `/effort max`. Jeżeli sesja jest w plan mode, to poproś ownera o wyjście z plan mode przed krokiem 3.
+1. Poproś ownera o komendę `/effort max`: sesja nie ma pewnego odczytu effort. Jeżeli sesja jest w plan mode, to poproś ownera o wyjście z plan mode przed krokiem 3.
 2. Przeczytaj w całości handoff, który wskazuje plik `pending`.
 3. Oznacz przejęcie: usuń plik `pending` i dopisz do handoffu linię „Przejęte: model, effort, data i godzina”. Linia zaczyna się od słowa „Przejęte:” w kolumnie 1.
 4. Wyślij liderowi wydającemu wiadomość o przejęciu (SendMessage). Lider wydający usuwa każdy cron kolejki z sesji lidera wydającego i potwierdza usunięcie. Kryterium: dokładnie 1 lider wykonuje kolejkę.
-5. Uruchom skill `drift-check` dla pracy z handoffu: porównaj polecenia ownera z faktycznym stanem repo, procesów i commitów. Pokaż wynik ownerowi. Kryterium: każde zadanie z kolejki ma status „zgodne”, „dryf” albo „brak dowodu”.
+5. Uruchom skill `drift-check` dla pracy z handoffu: porównaj polecenia ownera z faktycznym stanem repo, procesów i commitów. Wyślij wynik do oceny lewej półkuli (krok 7 trybu „otwarte sesje” skillu `drift-check`), potem pokaż wynik ownerowi. Kryterium: każde zadanie z kolejki ma status „zgodne”, „dryf” albo „brak dowodu”.
 6. Rozdziel kolejkę:
 
    | Rodzaj pracy | Wykonawca |
