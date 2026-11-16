@@ -182,6 +182,14 @@ python3 tools/pair-watch/pair.py --selftest
 python3 tools/pair-watch/pair.py context ~/.claude/projects/<project>/<session>.jsonl
 ```
 
+## Gitea mirror
+
+[`tools/gitea-middle-remote/gitea_mirror.py`](tools/gitea-middle-remote/gitea_mirror.py) adds a local Gitea as the
+third push URL of each clone that pushes to GitHub and GitLab. `--dry-run` prints the plan, `--apply` creates the
+Gitea repository with the GitHub visibility, appends the push URL after GitHub and GitLab, and pushes every branch
+and tag to Gitea only, `--compare` checks the default branch hash. The token is read from a file and sent only in
+an HTTP header.
+
 ## Install
 
 ```sh
