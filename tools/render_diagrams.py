@@ -129,6 +129,23 @@ DIAGRAMS = {
         ],
         "edges": [("limit", "give"), ("give", "take"), ("take", "drift"), ("drift", "queue")],
     },
+    "model-routing": {
+        "title": ["Each task goes to the cheapest model that does it well.",
+                  "A stronger model reviews the result; a miss becomes a runbook row or a test."],
+        "cols": 4,
+        "nodes": [
+            node("owner", 0, 0, ["Owner", "gives the order;", "decides class C"]),
+            node("lead", 1, 0, ["Lead: Fable 5.2", "plans, decides,", "writes the runbook,", "asks Haiku if stuck"], "accent"),
+            node("worker", 2, 0, ["Worker: Opus 5.5", "code, tests,", "measurements,", "queues"]),
+            node("exec", 3, 0, ["Executor: Sonnet 5.5", "repetitive work", "from the runbook;", "stops at a new fact"]),
+            node("ledger", 0, 1, ["Ledger", "one row per result,", "with evidence"]),
+            node("check", 1, 1, ["Check: Opus 5.5", "each row against", "its evidence;", "commit"]),
+            node("accept", 2, 1, ["Accept: Fable 5.2", "reads the check,", "pushes, reports", "to the owner"]),
+            node("rule", 3, 1, ["Rule update", "a miss becomes a", "new runbook row", "or a test"], "accent"),
+        ],
+        "edges": [("owner", "lead"), ("lead", "worker"), ("worker", "exec"), ("exec", "ledger"),
+                  ("ledger", "check"), ("check", "accept"), ("accept", "rule")],
+    },
     "github-readme": {
         "title": ["The reader learns what the project does in 30 s and runs it in 5 min.",
                   "After a large commit without README changes, readme-guard asks for one."],

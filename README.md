@@ -193,6 +193,15 @@ File: [`SKILL.md`](skills/polszczyzna-kontrolowana/SKILL.md). The rule set, the 
 measurement data live in their own repository:
 [polszczyzna-kontrolowana](https://github.com/maciejszulia/polszczyzna-kontrolowana).
 
+## Model routing
+
+![Owner, lead, worker, executor, ledger, check, accept, rule update](docs/diagrams/model-routing.svg)
+
+Each task goes to the cheapest model that does it well, and a stronger model reviews the result:
+Fable 5.2 leads, Opus 5.5 computes and checks, Sonnet 5.5 executes from a runbook, Haiku gives a
+hunch when no test exists. Roles, rules and one day in numbers:
+[docs/model-routing.md](docs/model-routing.md) ([po polsku](docs/model-routing.pl.md)).
+
 ## Pair watch
 
 Two Claude Code sessions can work as a pair: a lead that plans and a worker that computes.
