@@ -31,7 +31,7 @@ delegation — say so in one line, then do whichever the user asked for.
 
 ## The order file
 
-`docs/orders/<YYYY-MM-DD>-<slug>.md`, English, committed before launch — `.omx/` is gitignored
+`docs/orders/<YYYY-MM-DD>-<slug>.md`, Polish in PK (owner rule 2026-11-12), committed before launch — `.omx/` is gitignored
 and a worktree only contains committed files, so an uncommitted order simply is not there when
 the worker looks.
 

@@ -17,7 +17,7 @@ and true, F = checked and false, ? = not checked, with the reason.
 | Guard hooks (PreToolUse) | Regular expressions block `rm -rf` outside the work folders, `git worktree remove`, `git branch -D`, hard resets | No permission-prompt fatigue for safe commands | Policies are code without a test table |
 | Auto-mode classifier | Judges each tool call before it runs | Stopped subagents from posting claims on GitHub in the owner's name | No allowlist per role (collector, worker, lead) |
 | Session journal ([`sb-mem`](../README.md#sb-mem)) | Hooks write prompts, answers, delegations and commits as Markdown lines in SilverBullet | Readable and searchable by the owner | Not tamper-evident; no subagent start and stop; no structured fields |
-| [pr-sandbox](https://github.com/maciejszulia/pr-sandbox) | Untrusted code runs in Docker with `--network none`, `--cap-drop ALL`, a non-root user, a read-only source | Code from 799 unknown authors never reaches the network or the host files | Shares the host kernel (no gVisor or Firecracker) |
+| [pullrequest-sandbox](https://github.com/maciejszulia/pullrequest-sandbox) | Untrusted code runs in Docker with `--network none`, `--cap-drop ALL`, a non-root user, a read-only source | Code from 799 unknown authors never reaches the network or the host files | Shares the host kernel (no gVisor or Firecracker) |
 | [Controlled English](https://github.com/maciejszulia/controlled-english) and PK | Rules that leave each sentence 1 meaning; module S for claims, findings and test reports | Briefs and reports between agents have 1 reading | PK has a linter (`pklint`); CE has a word-count script only |
 | Privacy plugin | Blocks the owner's e-mail address in requests to outside services | Personal data stays out of URLs and payloads | No general PII or secret filter on tool output |
 
@@ -93,9 +93,9 @@ re-checked rows 4 and 5 by hand):
 | --- | --- | --- | --- |
 | 1 | Each agent has its own identity on GitHub | F | Every subagent's shell uses the owner's 1 `gh` token |
 | 2 | The token holds only the scopes an agent needs | F | Scopes `gist, project, read:org, repo, user, workflow` (`gh auth status`) |
-| 3 | Code from unknown authors runs without network and without host files | T | `pr-sandbox/tests/check_sandbox.sh`: "no network, source folder unchanged" |
+| 3 | Code from unknown authors runs without network and without host files | T | `pullrequest-sandbox/tests/check_sandbox.sh`: "no network, source folder unchanged" |
 | 4 | No agent can rewrite or delete `main` of a public repository | F before, T after 21:40 CET | Before: `branches/main/protection` returned 404 for 25 of 26 public repositories. After: 1 ruleset per repository, `rules/branches/<default>` returns `deletion,non_fast_forward` for 25 of 25 |
-| 5 | A push with a secret in it is refused | T for 26 of 26 public repositories | Push protection was on for 25; the lead switched it on for `pr-sandbox` (`security_and_analysis`) |
+| 5 | A push with a secret in it is refused | T for 26 of 26 public repositories | Push protection was on for 25; the lead switched it on for `pullrequest-sandbox` (`security_and_analysis`) |
 | 6 | Private repositories have the same protection | ? | The API returns 403 for rulesets and branch protection on 43 private repositories (GitHub Free) |
 | 7 | The SSH keys on the account are known and needed | ? | The token lacks `read:public_key`; `user/keys` returns 404 |
 | 8 | Every tool call passes a policy before it runs | T, partly | 4 PreToolUse hook entries plus the auto-mode classifier; no policy file with tests |
@@ -108,7 +108,7 @@ What the lead applied on 2026-11-23, because each step changes nothing in the da
 
 1. A ruleset "no force push or deletion of the default branch" (`deletion`, `non_fast_forward`, no bypass) on the 25
    public repositories that had no protection. `ksalol-chan` keeps its own branch protection.
-2. Secret scanning and push protection on `pr-sandbox`, the only public repository without them.
+2. Secret scanning and push protection on `pullrequest-sandbox`, the only public repository without them.
 
 What the lead proposes, because each step changes how the owner or the agents work:
 
@@ -126,7 +126,7 @@ flowchart TD
   OW["owner"] --> LD["lead session: owner's token"]
   LD --> SA["subagents: same token today, read-only token proposed"]
   LD --> GH["GitHub: rulesets, push protection"]
-  SA --> SB["pr-sandbox container: no network, no host files"]
+  SA --> SB["pullrequest-sandbox container: no network, no host files"]
   SA --> HK["PreToolUse hooks and classifier: policy before each call"]
   HK --> JN["agent-journal: hash chain, proposed"]
   SB --> UC["untrusted code from 799 authors"]
