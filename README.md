@@ -202,6 +202,13 @@ Fable 5.2 leads, Opus 5.5 computes and checks, Sonnet 5.5 executes from a runboo
 hunch when no test exists. Roles, rules and one day in numbers:
 [docs/model-routing.md](docs/model-routing.md) ([po polsku](docs/model-routing.pl.md)).
 
+## Agent fleet, lifecycle and zero trust
+
+A 2-agent fleet (a Haiku collector, a Sonnet worker, the lead merges) on a repository with 4,188 open pull
+requests: the measured lifecycle of each agent, a tamper-evident event journal, a truth table of where the setup
+stands on zero trust, and which parts of a zero-trust stack for agent networks pay off at this scale:
+[docs/agent-fleet-zero-trust.md](docs/agent-fleet-zero-trust.md).
+
 ## Pair watch
 
 Two Claude Code sessions can work as a pair: a lead that plans and a worker that computes.
@@ -244,12 +251,16 @@ Hooks that belong to no single skill live in [`hooks/`](hooks).
 |---|---|---|
 | [`link-guard.py`](hooks/link-guard.py) | `Stop` | Blocks an answer once when it says something was saved (`zapisane`, `zapisałem`) and carries no link. A link is a path with a line number or a URL. `--selftest` runs 8 cases. |
 | [`boldness-nudge.py`](hooks/boldness-nudge.py) | `SessionStart` | Counts the job-application cards and the order components that wait for me and prints one context line; prints nothing when both counts are 0. Read-only. `--selftest` builds a temporary ledger. |
+| [`agent-journal.py`](hooks/agent-journal.py) | every event (proposed, not installed) | Appends 1 JSON line per event with the hash of the line before, so an edited or deleted line breaks the chain. `--verify` checks a day, `--lifecycle` prints each subagent's start, stop and minutes, `--self-check` tampers in a temporary folder. Never blocks a tool call. |
 
 ```sh
 cp hooks/link-guard.py ~/.claude/hooks/
 # then add a Stop hook with the command: python3 ~/.claude/hooks/link-guard.py
 cp hooks/boldness-nudge.py ~/.claude/hooks/
 # then add a SessionStart hook with the command: python3 ~/.claude/hooks/boldness-nudge.py
+cp hooks/agent-journal.py ~/.claude/hooks/
+# then add it under SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, PostToolUseFailure,
+# SubagentStart, SubagentStop, Stop and SessionEnd: python3 ~/.claude/hooks/agent-journal.py
 ```
 
 ### Every hook my sessions run
