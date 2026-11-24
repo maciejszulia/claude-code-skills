@@ -2,7 +2,7 @@
 """Stop hook: an answer that says something was saved must carry a link (owner rule of 2026-11-16).
 
 Reads the Stop event JSON on stdin. If the last assistant message contains a "saved" word
-(zapisane, zapisałem, zapisał, zapisano ...) and no link, the hook blocks the stop once and asks
+(zapisane, zapisałem, zapisano, dopisałem ...) and no link, the hook blocks the stop once and asks
 for the link. A link is a path with a line number (`~/notes/rules.md:12`) or a URL.
 A "saved" word that only describes ("nie zapisałem", "czy jest zapisane", "zapisana tak, żeby") does not count.
 
@@ -15,23 +15,28 @@ import sys
 
 # A finished save: zapisałem, zapisał, zapisaliśmy, zapisano, the nominative participle (zapisany, zapisana, zapisane)
 # and the genitive next to a numeral ("15 wiadomości jest zapisanych", "zapisanych zostało 15"). Other cases describe.
-SAVED = re.compile(r"\bzapisa(?:ł\w*|li\w*|n[aeoy])\b"
-                   r"|\b(?:jest|było|zostało)\s+zapisanych\b|\bzapisanych\s+(?:jest|było|zostało)\b", re.IGNORECASE)
+# The saving verbs. "Wpisać" stays out: on 10 days of answers it added 6 right blocks and 13 wrong ones,
+# because "wpisałem" mostly means typing into a form.
+VERB = r"(?:za|do)pisa"
+SAVED = re.compile(rf"\b{VERB}(?:ł\w*|li\w*|n[aeoy])\b"
+                   rf"|\b(?:jest|było|zostało)\s+{VERB}nych\b|\b{VERB}nych\s+(?:jest|było|zostało)\b", re.IGNORECASE)
 # The same words when they claim nothing: a negation, a question, the quoted word itself, the manner of writing.
 # Each alternative reaches only as far as the word it excuses: "nie" across auxiliary words, "czy" up to the next
 # conjunction and 80 characters, so "sprawdziłem, czy test przechodzi i zapisałem wynik" stays a claim.
 # ponytail: a word list, measured on 10 days of answers; "zapisane w Lean" or "zapisane CV" still ask for a link.
 # Parse the sentence (a tagger such as Morfeusz) if the false blocks start to cost more than one extra turn.
 DESCRIBES = re.compile(
-    r"\bnie\s+(?:(?:jest|są|był\w*|został\w*|jeszcze|już)\s+){0,2}zapisa"
-    r"|(?<!\btak\s)\bczy\b(?:(?!\b(?:i|oraz|a|ale|więc|potem)\b)[^,;.!?\n]){0,80}\bzapisa"
-    r"|[„\"`]zapisa\w+[”“\"`]"
-    r"|\bzapisan\w+\s+(?:tak,?\s+(?:żeby|aby|by)|inaczej|poprawnie|błędnie|źle)\b"
-    r"|\b(?:poprawnie|błędnie|źle|inaczej)\s+zapisan",
+    rf"\bnie\s+(?:(?:jest|są|był\w*|został\w*|jeszcze|już)\s+){{0,2}}{VERB}"
+    rf"|(?<!\btak\s)\bczy\b(?:(?!\b(?:i|oraz|a|ale|więc|potem)\b)[^,;.!?\n]){{0,80}}\b{VERB}"
+    rf"|[„\"`]{VERB}\w+[”“\"`]"
+    rf"|\b{VERB}n\w+\s+(?:tak,?\s+(?:żeby|aby|by)|inaczej|poprawnie|błędnie|źle)\b"
+    rf"|\b(?:poprawnie|błędnie|źle|inaczej)\s+{VERB}n"
+    rf"|\bdopisa(?:ł|li)\w*by\w*",  # conditional mood, e.g. dopisałbym
     re.IGNORECASE)
 LINK = re.compile(r"https?://\S+|[~/][\w./~-]*\w:\d+")
 REASON = ("Reguła ownera 2026-11-16 (~/.claude/CLAUDE.md, sekcja „linki do reguł i do zapisów”): odpowiedź ze słowem "
-          "„zapisane” MUSI podać link do miejsca zapisu: `ścieżka:linia` albo adres URL. Dopisz link i zakończ odpowiedź.")
+          "„zapisane” albo „dopisałem” MUSI podać link do miejsca zapisu: `ścieżka:linia` albo adres URL. "
+          "Dopisz link i zakończ odpowiedź.")
 
 
 def verdict(event):
@@ -74,6 +79,16 @@ def selftest():
     assert say("Tak czy inaczej zapisałem notatkę.") == REASON
     assert say("Zapisanych zostało 15 wiadomości.") == REASON
     assert say("Reguła jest zapisana w formacie YAML w pamięci.") == REASON  # a format can come with a place
+    assert say("Dopisałem regułę do pamięci.") == REASON
+    assert say("Dopisanych zostało 5 wierszy.") == REASON
+    assert say("W rejestrze jest dopisanych 5 wierszy.") == REASON
+    assert say("Testu nie dopisałem.") is None
+    assert say("Sprawdzam, czy wiersz jest dopisany.") is None
+    assert say("Hook nie rozpoznaje słowa „dopisałem”.") is None
+    assert say("Linia jest dopisana tak, żeby test przeszedł.") is None
+    assert say("Daty są poprawnie dopisane.") is None
+    assert say("Poprawka: dopisałbym 1 zdanie.") is None
+    assert say("Wpisałem wynik do rejestru.") is None  # "wpisać" stays out
     print("ok")
 
 

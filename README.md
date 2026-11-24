@@ -249,7 +249,7 @@ Hooks that belong to no single skill live in [`hooks/`](hooks).
 
 | Hook | Event | What it does |
 |---|---|---|
-| [`link-guard.py`](hooks/link-guard.py) | `Stop` | Blocks an answer once when it says something was saved (`zapisane`, `zapisałem`) and carries no link. A link is a path with a line number or a URL. `--selftest` runs 8 cases. |
+| [`link-guard.py`](hooks/link-guard.py) | `Stop` | Blocks an answer once when it says something was saved (`zapisane`, `zapisałem`, `dopisałem`) and carries no link; a word that only describes (`nie zapisałem`, `czy jest zapisane`) does not count. A link is a path with a line number or a URL. `--selftest` runs 33 cases. |
 | [`boldness-nudge.py`](hooks/boldness-nudge.py) | `SessionStart` | Counts the job-application cards and the order components that wait for me and prints one context line; prints nothing when both counts are 0. Read-only. `--selftest` builds a temporary ledger. |
 | [`agent-journal.py`](hooks/agent-journal.py) | every event (proposed, not installed) | Appends 1 JSON line per event with the hash of the line before, so an edited or deleted line breaks the chain. `--verify` checks a day, `--lifecycle` prints each subagent's start, stop and minutes, `--self-check` tampers in a temporary folder. Never blocks a tool call. |
 
