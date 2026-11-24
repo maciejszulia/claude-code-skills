@@ -319,3 +319,7 @@ It also renders the two diagrams used in tractatus-skills.
 ```sh
 python3 tools/render_diagrams.py
 ```
+
+## Documentation
+
+[Architecture documentation](docs/architecture/README.md)
