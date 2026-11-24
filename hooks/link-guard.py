@@ -14,16 +14,19 @@ import re
 import sys
 
 # A finished save: zapisałem, zapisał, zapisaliśmy, zapisano, the nominative participle (zapisany, zapisana, zapisane)
-# and the genitive after a numeral ("15 wiadomości jest zapisanych"). Other cases of the participle only describe.
-SAVED = re.compile(r"\bzapisa(?:ł\w*|li\w*|n[aeoy])\b|\b(?:jest|było|zostało)\s+zapisanych\b", re.IGNORECASE)
+# and the genitive next to a numeral ("15 wiadomości jest zapisanych", "zapisanych zostało 15"). Other cases describe.
+SAVED = re.compile(r"\bzapisa(?:ł\w*|li\w*|n[aeoy])\b"
+                   r"|\b(?:jest|było|zostało)\s+zapisanych\b|\bzapisanych\s+(?:jest|było|zostało)\b", re.IGNORECASE)
 # The same words when they claim nothing: a negation, a question, the quoted word itself, the manner of writing.
+# Each alternative reaches only as far as the word it excuses: "nie" across auxiliary words, "czy" up to the next
+# conjunction and 80 characters, so "sprawdziłem, czy test przechodzi i zapisałem wynik" stays a claim.
 # ponytail: a word list, measured on 10 days of answers; "zapisane w Lean" or "zapisane CV" still ask for a link.
 # Parse the sentence (a tagger such as Morfeusz) if the false blocks start to cost more than one extra turn.
 DESCRIBES = re.compile(
-    r"\bnie\s+(?:\w+\s+){0,2}zapisa"
-    r"|\bczy\b[^,;.!?\n]*\bzapisa"
-    r"|[„\"`]zapisa\w+[”\"`]"
-    r"|\bzapisan\w+\s+(?:tak,?\s+(?:żeby|aby|by)|inaczej|poprawnie|błędnie|źle|w\s+formacie)\b"
+    r"\bnie\s+(?:(?:jest|są|był\w*|został\w*|jeszcze|już)\s+){0,2}zapisa"
+    r"|(?<!\btak\s)\bczy\b(?:(?!\b(?:i|oraz|a|ale|więc|potem)\b)[^,;.!?\n]){0,80}\bzapisa"
+    r"|[„\"`]zapisa\w+[”“\"`]"
+    r"|\bzapisan\w+\s+(?:tak,?\s+(?:żeby|aby|by)|inaczej|poprawnie|błędnie|źle)\b"
     r"|\b(?:poprawnie|błędnie|źle|inaczej)\s+zapisan",
     re.IGNORECASE)
 LINK = re.compile(r"https?://\S+|[~/][\w./~-]*\w:\d+")
@@ -36,8 +39,9 @@ def verdict(event):
     if event.get("stop_hook_active"):
         return None  # one reminder per stop, never a loop
     text = event.get("last_assistant_message") or ""
-    described = [m.span() for m in DESCRIBES.finditer(text)]
-    claims = any(not any(a <= m.start() < b for a, b in described) for m in SAVED.finditer(text))
+    saved = list(SAVED.finditer(text))
+    described = [m.span() for m in DESCRIBES.finditer(text)] if saved else []
+    claims = any(not any(a <= m.start() < b for a, b in described) for m in saved)
     # ponytail: a link anywhere in the answer passes; pair each "saved" word with its own link if that proves too weak
     return REASON if claims and not LINK.search(text) else None
 
@@ -62,6 +66,14 @@ def selftest():
     assert say("Sprawdzam, czy problem jest już zapisany w papercuts.") is None
     assert say("Hook reaguje na słowo „zapisane”.") is None
     assert say("Obszedłem to skryptem zapisanym w pliku.") is None
+    assert say("Sprawdzam, czy Opus zapisał wynik.") is None
+    assert say("Hook reaguje na słowo „zapisane“.") is None                  # the German-style closing quote
+    # a claim next to "nie", "czy" or a conjunction is still a claim
+    assert say("Nie tylko zapisałem regułę, ale też dodałem test.") == REASON
+    assert say("Sprawdziłem, czy test przechodzi i zapisałem wynik w SB.") == REASON
+    assert say("Tak czy inaczej zapisałem notatkę.") == REASON
+    assert say("Zapisanych zostało 15 wiadomości.") == REASON
+    assert say("Reguła jest zapisana w formacie YAML w pamięci.") == REASON  # a format can come with a place
     print("ok")
 
 
